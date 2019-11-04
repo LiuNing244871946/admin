@@ -1,17 +1,16 @@
 <template>
   <div class="menu-wrapper">
-    <template v-for="item in routes">
-      <router-link v-if="item.level==0 && item.url && item.isMenu" :to="item.url" :key="item.id">
-        <el-menu-item id="e1" :index="item.url" :class="{'submenu-title-noDropdown':!isNest}">
-          <i :class="'fa ' + item.icon" aria-hidden="true" />
-          <span>{{ item.name }}</span>
+    <template>
+      <router-link :to="item.menu_url" :key="item.id">
+        <el-menu-item id="e1" :index="item.menu_url" :class="{'submenu-title-noDropdown':!isNest}">
+          <!-- <i :class="'fa ' + item.icon" aria-hidden="true" /> -->
+          <span>{{ item.menu_name }}</span>
         </el-menu-item>
       </router-link>
-
-      <el-submenu v-if="item.level == 0 && !item.url && item.isMenu" id="e2" :index="item.name" :key="item.id">
+      <!-- <el-submenu v-if="!item.menu_url" id="e2" :index="item.name" :key="item.id">
         <template slot="title">
           <i :class="'fa ' + item.icon" aria-hidden="true" />
-          <span>{{ item.name }}</span>
+          <span>{{ item.menu_name }}</span>
         </template>
 
         <template v-for="child in routes" v-if="child.pid == item.id">
@@ -24,23 +23,50 @@
             </el-menu-item>
           </router-link>
         </template>
-      </el-submenu>
+      </el-submenu> -->
 
     </template>
   </div>
 </template>
 
 <script>
+import path from 'path'
+import { isExternal } from '@/utils'
+import Item from './Item'
+import AppLink from './Link'
+
 export default {
   name: 'SidebarItem',
+  components: { Item, AppLink },
   props: {
-    routes: {
-      type: Array,
-      default: () => []
+    // route object
+    item: {
+      type: Object,
+      required: true
     },
     isNest: {
       type: Boolean,
       default: false
+    },
+    basePath: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      onlyOneChild: null
+    }
+  },
+  methods: {
+    resolvePath(routePath) {
+      if (this.isExternalLink(routePath)) {
+        return routePath
+      }
+      return path.resolve(this.basePath, routePath)
+    },
+    isExternalLink(routePath) {
+      return isExternal(routePath)
     }
   }
 }

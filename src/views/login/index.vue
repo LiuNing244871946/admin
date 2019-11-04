@@ -33,20 +33,12 @@
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
 import { setToken } from '@/utils/auth'
 import { Message } from 'element-ui'
 import { API } from '@/utils/api'
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('请输入用户名'))
-      } else {
-        callback()
-      }
-    }
     const validatePass = (rule, value, callback) => {
       if (value.length < 5) {
         callback(new Error('密码不能小于5位'))
@@ -61,7 +53,7 @@ export default {
       },
       codeUrl: '',
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
         password: [{ required: true, trigger: 'blur', validator: validatePass }]
       },
       loading: false,
@@ -112,9 +104,9 @@ export default {
           API.login(this.loginForm.username, this.loginForm.password).then((res) => {
             this.loading = false
             if (res.code === 200) {
-              console.log('8888')
-              setToken(res.data)
+              setToken(res.data.token_admin)
               this.$router.push({ path: this.redirect || '/' })
+              this.$store.commit('setUserInfo', res.data.username)
             } else {
               Message({
                 message: res.msg,

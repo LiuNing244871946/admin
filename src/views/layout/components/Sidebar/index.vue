@@ -1,5 +1,5 @@
 <template>
-  <scroll-bar>
+  <el-scrollbar wrap-class="scrollbar-wrapper">
     <el-menu
       :show-timeout="200"
       :default-active="$route.path"
@@ -8,14 +8,15 @@
       text-color="#bfcbd9"
       active-text-color="#409EFF"
       mode="vertical">
-      <sidebar-item :routes="routes" />
+      <sidebar-item v-for="route in routes" :key="route.id" :item="route" :base-path="route.menu_url"/>
     </el-menu>
-  </scroll-bar>
+  </el-scrollbar>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import SidebarItem from './SidebarItem'
-// import { API } from '@/utils/api'
+import { API } from '@/utils/api'
+import { getToken } from '@/utils/auth'
 
 export default {
   components: { SidebarItem },
@@ -28,25 +29,23 @@ export default {
     ...mapGetters([
       'sidebar'
     ]),
-    /* routes() {
-      return this.$router.options.routes
-    },*/
     isCollapse() {
       return !this.sidebar.opened
     }
   },
   mounted() {
-    // API.getMenu().then(function(res) {
-    //   if (res.code === 0) {
-    //     // console.log(res.data)
-    //     vm.routes = res.data
-    //   }
-    // }).catch(function(error) {
-    //   console.log(error)
-    // })
+    const that = this
+    console.log(getToken(), '66')
+    API.Menu(getToken()).then(res => {
+      if (res.code === 200) {
+        console.log(res.data, '222222')
+        that.routes = res.data
+      }
+    }).catch(error => {
+      console.log(error)
+    })
   }
 }
 </script>
-<style>
-
+<style  lang="scss">
 </style>

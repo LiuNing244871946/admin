@@ -4,11 +4,11 @@
     <breadcrumb />
     <div class="avatar-container" trigger="click">
       <div class="navbarRight">
-        <span>当前用户：{{ userInfo.realname }}</span>
-        <span style="cursor:pointer" @click="changePaw">
+        <span>当前用户：{{ userName }}</span>
+        <span style="cursor:pointer">
           <i class="el-icon-setting" />修改密码
         </span>
-        <span style="cursor:pointer" @click="loginOut">
+        <span style="cursor:pointer">
           <i class="fa fa-arrow-circle-right" />
           退出
         </span>
@@ -23,7 +23,6 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 // import { API } from '@/utils/api'
 // import { removeToken } from '@/utils/auth'
-let vm
 export default {
   components: {
     Breadcrumb,
@@ -37,33 +36,17 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'userName'
     ])
   },
   mounted() {
-    vm = this
-    vm.getUserInfo()
   },
   methods: {
     // 面包屑点击事件
     toggleSideBar() {
       this.$store.dispatch('ToggleSideBar')
     }
-    // 获取当前用户信息
-    // getUserInfo() {
-    //   API.getUserInfo().then(res => {
-    //     if (res.code === 0) {
-    //       if (res.data) {
-    //         vm.userInfo = res.data
-    //       }
-    //     } else {
-    //       this.$message({
-    //         type: 'error',
-    //         message: res.msg
-    //       })
-    //     }
-    //   })
-    // },
     // // 登出
     // loginOut() {
     //   API.loginOut().then(function(res) {

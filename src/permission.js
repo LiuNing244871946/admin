@@ -1,8 +1,7 @@
 import router from './router'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
-import { getToken, removeToken } from '@/utils/auth' // 验权
-import { API } from '@/utils/api'
+import { getToken } from '@/utils/auth' // 验权
 // import store from '@/store/index'
 
 const whiteList = ['/login'] // 不重定向白名单
@@ -13,23 +12,8 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
-      API.checkStatus(getToken()).then(res => { // 拉取用户信息
-        if (res.code === 0) {
-          next()
-        } else {
-          removeToken()
-          next({ path: '/' })
-        }
-      }).catch(() => {
-        // console.error(err)
-        removeToken()
-        next({ path: '/' })
-      })
+      next()
     }
-  // } else if (getChargeToken()) {
-  //   next()
-  // } else if (getBusinessToken()) {
-  //   next()
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
       next()

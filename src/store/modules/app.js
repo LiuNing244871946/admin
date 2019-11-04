@@ -6,7 +6,8 @@ const app = {
       opened: !+Cookies.get('sidebarStatus'),
       withoutAnimation: false
     },
-    device: 'desktop'
+    device: 'desktop',
+    userName: ''
   },
   mutations: {
     TOGGLE_SIDEBAR: state => {
@@ -25,6 +26,10 @@ const app = {
     },
     TOGGLE_DEVICE: (state, device) => {
       state.device = device
+    },
+    setUserInfo: (state, userName) => {
+      state.userName = userName
+      window.sessionStorage.setItem('userName', userName)
     }
   },
   actions: {

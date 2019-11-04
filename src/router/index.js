@@ -31,13 +31,28 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/admin',
     name: 'admin',
-    meta: { title: '首页' },
+    meta: { title: '系统管理' },
     children: [
       {
-        path: 'admin',
+        path: '',
         name: 'index',
         meta: { noKeepAlive: true },
         component: () => import('@/views/Home')
+      }
+    ]
+  },
+  {
+    path: '/admin/index/listmenu',
+    component: Layout,
+    redirect: '/admin/index/listmenu',
+    name: 'cdgl',
+    meta: { title: '菜单管理' },
+    children: [
+      {
+        path: '/admin/index/listmenu',
+        name: '菜单管理',
+        meta: { noKeepAlive: true },
+        component: () => import('@/views/Menu')
       }
     ]
   },

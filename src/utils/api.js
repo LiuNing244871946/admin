@@ -10,5 +10,13 @@ export const API = {
         password
       }
     })
+  },
+  // 获取菜单列表
+  Menu: (TokenAdmin) => {
+    return request({
+      url: 'admin/index/listmenu',
+      method: 'get',
+      data: { TokenAdmin }
+    })
   }
 }
