@@ -29,30 +29,30 @@ export const constantRouterMap = [
   {
     path: '/',
     component: Layout,
-    redirect: '/admin',
+    redirect: '/admin/index/listmenu',
     name: 'admin',
     meta: { title: '系统管理' },
     children: [
       {
-        path: '',
-        name: 'index',
-        meta: { noKeepAlive: true },
-        component: () => import('@/views/Home')
+        path: '/admin/index/listmenu',
+        name: '菜单管理',
+        meta: { title: '菜单管理', noKeepAlive: true },
+        component: () => import('@/views/Menu')
       }
     ]
   },
   {
-    path: '/admin/index/listmenu',
+    path: '/',
     component: Layout,
-    redirect: '/admin/index/listmenu',
-    name: 'cdgl',
-    meta: { title: '菜单管理' },
+    redirect: '/admin/product/productList',
+    name: 'spgl',
+    meta: { title: '商品管理' },
     children: [
       {
-        path: '/admin/index/listmenu',
-        name: '菜单管理',
-        meta: { noKeepAlive: true },
-        component: () => import('@/views/Menu')
+        path: '/admin/product/productList',
+        name: '商品列表',
+        meta: { title: '商品列表', noKeepAlive: true },
+        component: () => import('@/views/ProductList')
       }
     ]
   },

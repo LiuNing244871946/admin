@@ -11,6 +11,14 @@ export const API = {
       }
     })
   },
+  // 修改密码的功能 POST /admin/editPwd/save
+  modifyPassword: (oldpass, newpass, password) => {
+    return request({
+      url: '/admin/user/password',
+      method: 'post',
+      data: { oldpass, newpass, password }
+    })
+  },
   // 获取菜单列表
   Menu: (TokenAdmin) => {
     return request({

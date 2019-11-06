@@ -35,10 +35,8 @@ export default {
   },
   mounted() {
     const that = this
-    console.log(getToken(), '66')
     API.Menu(getToken()).then(res => {
       if (res.code === 200) {
-        console.log(res.data, '222222')
         that.routes = res.data
       }
     }).catch(error => {
