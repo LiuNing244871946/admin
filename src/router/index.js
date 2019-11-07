@@ -53,10 +53,36 @@ export const constantRouterMap = [
         name: '商品列表',
         meta: { title: '商品列表', noKeepAlive: true },
         component: () => import('@/views/ProductList')
+      },
+      {
+        path: '/admin/product/classlist',
+        name: '商品分类列表',
+        meta: { title: '商品分类列表', noKeepAlive: true },
+        component: () => import('@/views/product/classlist')
       }
     ]
   },
-
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/admin/index/account',
+    name: 'account',
+    meta: { title: '账户管理' },
+    children: [
+      {
+        path: '/admin/index/account',
+        name: '后台账户',
+        meta: { title: '后台账户列表', noKeepAlive: true },
+        component: () => import('@/views/account/account')
+      },
+      {
+        path: '/admin/index/listGroup',
+        name: '后台用户组列表',
+        meta: { title: '后台用户组列表', noKeepAlive: true },
+        component: () => import('@/views/account/listGroup')
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 

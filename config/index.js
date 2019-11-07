@@ -9,7 +9,7 @@ module.exports = {
   dev: {
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
     proxyTable: {
       // '/api': {
       //   target: devEnv.DEV_API_URL,
@@ -68,7 +68,7 @@ module.exports = {
      * then assetsPublicPath should be set to "/bar/".
      * In most cases please use '/' !!!
      */
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps
