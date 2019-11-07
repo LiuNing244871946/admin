@@ -66,8 +66,8 @@ export const constantRouterMap = [
     path: '/',
     component: Layout,
     redirect: '/admin/index/account',
-    name: 'account',
-    meta: { title: '账户管理' },
+    name: 'zh',
+    meta: { title: '账户' },
     children: [
       {
         path: '/admin/index/account',
@@ -80,6 +80,51 @@ export const constantRouterMap = [
         name: '后台用户组列表',
         meta: { title: '后台用户组列表', noKeepAlive: true },
         component: () => import('@/views/account/ListGroup')
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/admin/user/userList',
+    name: 'hygl',
+    meta: { title: '会员管理' },
+    children: [
+      {
+        path: '/admin/user/userList',
+        name: '会员列表',
+        meta: { title: '会员列表', noKeepAlive: true },
+        component: () => import('@/views/UserList')
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/admin/order/orderList',
+    name: 'ddgl',
+    meta: { title: '订单管理' },
+    children: [
+      {
+        path: '/admin/order/orderList',
+        name: '订单列表',
+        meta: { title: '订单列表', noKeepAlive: true },
+        component: () => import('@/views/OrderList')
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/admin/ent/entList',
+    name: 'dlgl',
+    meta: { title: '代理管理' },
+    children: [
+      {
+        path: '/admin/ent/entList',
+        name: '代理列表',
+        meta: { title: '代理列表', noKeepAlive: true },
+        component: () => import('@/views/MerchantList')
       }
     ]
   },
