@@ -3,7 +3,7 @@
     <template v-if="!item.subMenuList || item.subMenuList.length == 0">
       <app-link :to="resolvePath(item.menu_url)">
         <el-menu-item :index="resolvePath(item.menu_url)" :class="{'submenu-title-noDropdown':!isNest}">
-          <i :class="'fa fa-fw ' + item.icon" style="font-size:16px;color:#ddd" />
+          <i :class="'fa fa-fw ' + item.menu_icon" style="font-size:16px;color:#ddd" />
           <span slot="title" style="margin-left:10px;color:#ddd">{{ item.menu_name }}</span>
         </el-menu-item>
       </app-link>
@@ -11,7 +11,7 @@
 
     <el-submenu v-else :index="''+item.id">
       <template slot="title">
-        <i :class="'fa fa-fw ' + item.icon" style="font-size:16px;color:#ddd" />
+        <i :class="'fa fa-fw ' + item.menu_icon" style="font-size:16px;color:#ddd" />
         <span slot="title" style="margin-left:10px;color:#ddd">{{ item.menu_name }}</span>
       </template>
 

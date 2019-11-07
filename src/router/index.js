@@ -29,12 +29,12 @@ export const constantRouterMap = [
   {
     path: '/',
     component: Layout,
-    redirect: '/admin/index/listmenu',
+    redirect: '/admin/index/listMenu',
     name: 'admin',
     meta: { title: '系统管理' },
     children: [
       {
-        path: '/admin/index/listmenu',
+        path: '/admin/index/listMenu',
         name: '菜单管理',
         meta: { title: '菜单管理', noKeepAlive: true },
         component: () => import('@/views/Menu')
@@ -55,10 +55,10 @@ export const constantRouterMap = [
         component: () => import('@/views/ProductList')
       },
       {
-        path: '/admin/product/classlist',
+        path: '/admin/product/classList',
         name: '商品分类列表',
         meta: { title: '商品分类列表', noKeepAlive: true },
-        component: () => import('@/views/product/classlist')
+        component: () => import('@/views/product/classList')
       }
     ]
   },
@@ -73,13 +73,13 @@ export const constantRouterMap = [
         path: '/admin/index/account',
         name: '后台账户',
         meta: { title: '后台账户列表', noKeepAlive: true },
-        component: () => import('@/views/account/account')
+        component: () => import('@/views/account/Account')
       },
       {
         path: '/admin/index/listGroup',
         name: '后台用户组列表',
         meta: { title: '后台用户组列表', noKeepAlive: true },
-        component: () => import('@/views/account/listGroup')
+        component: () => import('@/views/account/ListGroup')
       }
     ]
   },

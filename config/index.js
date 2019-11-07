@@ -9,7 +9,7 @@ module.exports = {
   dev: {
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    assetsPublicPath: '/',
     proxyTable: {
       // '/api': {
       //   target: devEnv.DEV_API_URL,
