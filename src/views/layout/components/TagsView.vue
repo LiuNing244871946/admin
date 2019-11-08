@@ -1,12 +1,12 @@
 <template>
   <div class="tags-view-container">
-    <scroll-pane class='tags-view-wrapper' ref='scrollPane'>
-      <router-link ref='tag' class="tags-view-item" :class="isActive(tag)?'active':''" v-for="tag in Array.from(visitedViews)" :to="tag.path" :key="tag.path" @contextmenu.prevent.native="openMenu(tag,$event)">
+    <scroll-pane ref="scrollPane" class="tags-view-wrapper">
+      <router-link v-for="tag in Array.from(visitedViews)" ref="tag" :class="isActive(tag)?'active':''" :to="tag.path" :key="tag.path" class="tags-view-item" @contextmenu.prevent.native="openMenu(tag,$event)">
         {{ tag.title }}
-        <span class='el-icon-close' @click.prevent.stop='closeSelectedTag(tag)'></span>
+        <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
       </router-link>
     </scroll-pane>
-    <ul class='contextmenu' v-show="visible" :style="{left:left+'px',top:top+'px'}">
+    <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
       <li @click="closeSelectedTag(selectedTag)">关闭</li>
       <li @click="closeOthersTags">关闭其它</li>
       <li @click="closeAllTags">关闭所有</li>
@@ -68,7 +68,7 @@ export default {
     moveToCurrentTag() {
       const tags = this.$refs.tag
       if (!tags) {
-        return;
+        return
       }
       this.$nextTick(() => {
         for (const tag of tags) {

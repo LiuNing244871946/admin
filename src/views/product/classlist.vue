@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "PageAccount"
+  name: 'PageAccount'
 }
 </script>
 

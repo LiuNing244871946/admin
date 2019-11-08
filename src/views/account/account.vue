@@ -13,7 +13,7 @@
       </el-form-item>
     </el-form>
     <!-- 表格数据 -->
-    <el-table v-loading="listLoading" border :data="tableData" fit show-header empty-text="暂无数据" highlight-current-row element-loading-text="拼命加载中">
+    <el-table v-loading="listLoading" :data="tableData" border fit show-header empty-text="暂无数据" highlight-current-row element-loading-text="拼命加载中">
       <el-table-column label="用户名" prop="username"/>
       <el-table-column label="角色类型" prop="role_Type"/>
       <el-table-column label="所属组" prop="groupname"/>
@@ -36,21 +36,21 @@
         @current-change="handleCurrentChange" />
     </div>
     <!-- 添加管理员 -->
-    <el-dialog title="添加管理员" :visible.sync="dialogFormVisible">
+    <el-dialog :visible.sync="dialogFormVisible" title="添加管理员">
       <el-form :model="addForm" label-width="80px">
         <el-form-item label="用户名：">
-          <el-input v-model="addForm.name" autocomplete="off"></el-input>
+          <el-input v-model="addForm.name" autocomplete="off" />
         </el-form-item>
         <el-form-item label="密码" >
-          <el-input v-model="addForm.password" autocomplete="off"></el-input>
+          <el-input v-model="addForm.password" autocomplete="off" />
         </el-form-item>
         <el-form-item label="电话：" >
-          <el-input v-model="addForm.phone" autocomplete="off"></el-input>
+          <el-input v-model="addForm.phone" autocomplete="off" />
         </el-form-item>
         <el-form-item label="选择分组：" >
           <el-select v-model="addForm.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <el-option label="区域一" value="shanghai" />
+            <el-option label="区域二" value="beijing" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -67,16 +67,16 @@ export default {
   data() {
     return {
       dialogFormVisible: false,
-      formLabelWidth:"100px",
+      formLabelWidth: '100px',
       formInline: {
         currPage: 1,
         pageSize: 10
       },
-      addForm:{
-        username:"",
-        phone:"",
-        group_id:"",
-        password:""
+      addForm: {
+        username: '',
+        phone: '',
+        group_id: '',
+        password: ''
       },
       tableData: [],
       listLoading: true,
@@ -130,8 +130,8 @@ export default {
       that.formInline.page = val
       that.getTableDatas()
     },
-    //添加管理员
-    addAdmin(){
+    // 添加管理员
+    addAdmin() {
 
     }
   }

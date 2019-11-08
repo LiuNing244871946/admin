@@ -27,7 +27,7 @@ export const API = {
       data: { TokenAdmin }
     })
   },
-  //后台用户组列表
+  // 后台用户组列表
   ListGroup: (TokenAdmin) => {
     return request({
       url: 'admin/index/listGroup',

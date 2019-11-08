@@ -12,7 +12,7 @@
       </el-form-item>
     </el-form>
     <!-- 表格数据 -->
-    <el-table v-loading="listLoading" border :data="tableData" fit show-header empty-text="暂无数据" highlight-current-row element-loading-text="拼命加载中">
+    <el-table v-loading="listLoading" :data="tableData" fit show-header empty-text="暂无数据" border highlight-current-row element-loading-text="拼命加载中">
       <el-table-column label="分组名称" prop="group_name"/>
       <el-table-column label="创建日期" prop="create_date"/>
       <el-table-column label="最后修改日期" prop="modify_date"/>
@@ -100,7 +100,7 @@ export default {
       that.formInline.page = val
       that.getTableDatas()
     },
-    handleClick(){
+    handleClick() {
 
     }
   }
