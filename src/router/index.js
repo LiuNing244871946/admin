@@ -52,7 +52,7 @@ export const constantRouterMap = [
         path: '/admin/product/productList',
         name: '商品列表',
         meta: { title: '商品列表', noKeepAlive: true },
-        component: () => import('@/views/ProductList')
+        component: () => import('@/views/product/ProductList')
       },
       {
         path: '/admin/product/classList',

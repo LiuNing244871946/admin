@@ -19,7 +19,7 @@
       <el-table-column label="销售数量" prop="actual_sell_num"/>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="text" style="color: #478FCA" @click="handleClick1(scope.row)">详情</el-button>
+          <el-button type="text" style="color: #478FCA" @click="productDetail(scope.row)">详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -35,7 +35,25 @@
         @current-change="handleCurrentChange" />
     </div>
     <!-- 详情弹窗 -->
-
+    <el-dialog :visible.sync="dialogVisible" title="商品详情">
+      <el-form ref="formLabelAlign" :model="formLabelAlign" status-icon label-width="100px">
+        <el-form-item label="商品名称:">
+          <span>{{ formLabelAlign.product_name }}</span>
+        </el-form-item>
+        <el-form-item label="商品标题:">
+          <span>{{ formLabelAlign.product_title }}</span>
+        </el-form-item>
+        <el-form-item label="分类id:">
+          <span>{{ formLabelAlign.category_id }}</span>
+        </el-form-item>
+        <el-form-item label="品牌名称:">
+          <span>{{ formLabelAlign.brand_name }}</span>
+        </el-form-item>
+        <el-form-item label="成交日期:">
+          <span>{{ formLabelAlign.modify_date ? formLabelAlign.modify_date : '-' }}</span>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -55,6 +73,18 @@ export default {
         pageSizes: [10],
         pageSize: 0,
         tatal: 0
+      },
+      formLabelAlign: {
+        id: '',
+        acountId: '',
+        orderId: '',
+        behavior: '',
+        stockCode: '',
+        stockName: '',
+        entrustPrice: '',
+        realPrice: '',
+        number: '',
+        dateAdd: ''
       }
     }
   },
@@ -99,6 +129,19 @@ export default {
       const that = this
       that.formInline.page = val
       that.getTableDatas()
+    },
+    productDetail(data) {
+      const that = this
+      that.dialogVisible = true
+      request({
+        url: '/admin/product/getProductInfo/' + data.id,
+        method: 'get'
+      }).then(response => {
+        if (response.code === 200) {
+          const res = response.data
+          that.formLabelAlign = Object.assign({}, res)
+        }
+      })
     }
   }
 }
