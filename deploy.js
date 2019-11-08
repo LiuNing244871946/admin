@@ -5,13 +5,13 @@ fs = require('fs')
 path = require('path')
 node_ssh = require('node-ssh')
 ssh = new node_ssh()
-const password = 'qazWSX123456'
+const password = '~!@@!~JIUDUOjiuduo'
 const failed = []
 const successful = []
 
 // connect sftp
 ssh.connect({
-  host: '192.168.1.91',
+  host: '139.196.212.249',
   username: 'root',
   port: 22,
   password,
@@ -22,7 +22,7 @@ ssh.connect({
     }
   }
 }).then(function() {
-  ssh.putDirectory('./dist', '/data/ziguan/console', {
+  ssh.putDirectory('./dist', '/var/www/ldsadmin', {
     recursive: true,
     concurrency: 10,
     validate: function(itemPath) {
