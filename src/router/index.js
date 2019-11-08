@@ -58,7 +58,7 @@ export const constantRouterMap = [
         path: '/admin/product/classList',
         name: '商品分类列表',
         meta: { title: '商品分类列表', noKeepAlive: true },
-        component: () => import('@/views/product/classlist')
+        component: () => import('@/views/product/ClassList')
       }
     ]
   },
@@ -79,7 +79,7 @@ export const constantRouterMap = [
         path: '/admin/index/listGroup',
         name: '后台用户组列表',
         meta: { title: '后台用户组列表', noKeepAlive: true },
-        component: () => import('@/views/account/listGroup')
+        component: () => import('@/views/account/ListGroup')
       }
     ]
   },
