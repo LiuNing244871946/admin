@@ -30,7 +30,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <!-- 添加修改弹窗 -->
     <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title">
       <el-form ref="addForm" :model="addForm" status-icon label-width="100px">
@@ -137,7 +137,7 @@ export default {
         }
       })
     },
-    //打开修改弹窗
+    // 打开修改弹窗
     handleRow(row){
       this.iv_dialog.show = true
       this.iv_dialog.title = "修改管理员分组"
@@ -162,7 +162,7 @@ export default {
       that.formInline.page = val
       that.getTableDatas()
     },
-    
+
     //上传成功
     handleAvatarSuccess(res, file) {
       this.addForm.category_img = file.response.filename
@@ -187,7 +187,7 @@ export default {
       }else{
         this.postForm(this.addForm,formName)
       }
-      this.iv_dialog.isEdit = false 
+      this.iv_dialog.isEdit = false
     },
     //添加商品分类
     addClass(){
@@ -195,8 +195,7 @@ export default {
       this.iv_dialog.title = "添加管理员分组"
       this.iv_dialog.isEdit = false
     },
-    postForm(form,formName){
-      console.log(form)
+    postForm(form,formName) {
       // return
       let that = this
       this.$refs[formName].validate((valid) => {

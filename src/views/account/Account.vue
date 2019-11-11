@@ -170,7 +170,6 @@ export default {
     postForm(formData,formName){
       const that = this
       const addForm = formData
-      console.log(formData)
       this.$refs[formName].validate((valid) => {
         if (valid) {
           request({

@@ -93,7 +93,7 @@ export default {
       }).then(response => {
         if (response.code === 200) {
           const result = response.data
-          that.pagination.pageSize = response.data.pageSize
+          // that.pagination.pageSize = response.data.pageSize
           that.pagination.tatal = response.data.totalNum
           that.tableData = result
           that.listLoading = false
