@@ -20,7 +20,7 @@
       <el-table-column label="销售数量" prop="actual_sell_num"/>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="text" style="color: #478FCA" @click="handleClick1(scope.row)">详情</el-button>
+          <el-button type="text" style="color: #478FCA" @click="handleRow(scope.row)">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -36,7 +36,7 @@
         @current-change="handleCurrentChange" />
     </div>
     <!-- 添加管理员 -->
-    <el-dialog :visible.sync="dialogFormVisible" title="添加管理员">
+    <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title">
       <el-form ref="addForm" :model="addForm" label-width="90px">
         <el-form-item label="用户名：">
           <el-input v-model="addForm.username" auto-complete="off" />
@@ -48,13 +48,12 @@
           <el-input v-model="addForm.phone" auto-complete="off" />
         </el-form-item>
         <el-form-item label="选择分组：" >
-          <el-select v-model="addForm.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai" />
-            <el-option label="区域二" value="beijing" />
+          <el-select v-model="addForm.group_id" placeholder="">
+            <el-option v-for="i in groupData" :key="i.id" :label="i.group_name" :value="i.id" />
           </el-select>
         </el-form-item>
         <el-form-item style="display:block;text-align:center;" label-width="0px">
-          <el-button @click="dialogFormVisible = false">取消</el-button>
+          <el-button @click="iv_dialog.show = false">取消</el-button>
           <el-button type="primary" @click="submitForm('addForm')">确定</el-button>
           <!-- <el-button @click="resetForm('formLabelAlign')">重置</el-button> -->
         </el-form-item>
@@ -67,7 +66,6 @@ import request from '@/utils/request'
 export default {
   data() {
     return {
-      dialogFormVisible: false,
       formLabelWidth: '100px',
       formInline: {
         currPage: 1,
@@ -86,11 +84,19 @@ export default {
         pageSizes: [10],
         pageSize: 0,
         tatal: 0
+      },
+      groupData:null,
+      iv_dialog:{
+        show: false,
+        title: "添加管理员",
+        isEdit: false,
+        userId: null,
       }
     }
   },
   mounted() {
     this.getTableDatas()
+    this.getGroupData()
   },
   methods: {
     // 获取表格数据
@@ -116,6 +122,19 @@ export default {
         }
       })
     },
+    //获取用户组列表
+    getGroupData(){
+      request({
+        url: '/admin/index/listGroup',
+        method: 'get',
+      }).then(response => {
+        if (response.code === 200) {
+          this.groupData = response.data
+        } else {
+         this.$message.error(response.msg);
+        }
+      })
+    },
     // 查询
     onSubmit() {
       const that = this
@@ -134,11 +153,24 @@ export default {
     // 添加管理员
     addAdmin() {
       const that = this
-      that.dialogFormVisible = true
+      that.iv_dialog.isEdit = false
+      that.iv_dialog.isEdit = "添加管理员"
+      that.iv_dialog.show = true
     },
     submitForm(formName) {
+      let that = this
+      if(that.iv_dialog.isEdit){
+        this.postForm({ ...that.addForm , ...{id:this.userId}},formName)
+      }else{
+        this.postForm(this.addForm,formName)
+      }
+      this.iv_dialog.isEdit = false
+    },
+    //表单提交
+    postForm(formData,formName){
       const that = this
-      const addForm = that.addForm
+      const addForm = formData
+      console.log(formData)
       this.$refs[formName].validate((valid) => {
         if (valid) {
           request({
@@ -152,7 +184,7 @@ export default {
                 type: 'success'
               })
               that.resetForm(formName)
-              that.dialogFormVisible = false
+              that.iv_dialog.show = false
               this.getTableDatas()
             } else {
               this.$message({
@@ -162,10 +194,25 @@ export default {
             }
           })
         } else {
-          console.log('error submit!!')
+          this.$message.error(response.msg);
           return false
         }
       })
+    },
+    //重置表单
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    handleRow(row){
+      console.log(row)
+      let that = this
+      that.addForm.group_id = row.group_id
+      that.addForm.phone = row.phone
+      that.addForm.username = row.username
+      that.userId = row.id
+      that.iv_dialog.isEdit = true
+      that.iv_dialog.show = true
+      that.iv_dialog.title = "修改管理员"
     }
   }
 }
