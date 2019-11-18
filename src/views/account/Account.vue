@@ -128,6 +128,7 @@ export default {
   mounted() {
     this.getTableDatas();
     this.getGroupData();
+    this.addFormTmp = Object.assign({}, this.addForm)
   },
   methods: {
     // 获取表格数据
@@ -187,6 +188,7 @@ export default {
       that.iv_dialog.isEdit = false;
       that.iv_dialog.isEdit = "添加管理员";
       that.iv_dialog.show = true;
+      that.addForm = Object.assign({}, this.addFormTmp)
     },
     submitForm(formName) {
       let that = this;

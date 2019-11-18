@@ -77,8 +77,8 @@ export const constantRouterMap = [
     children: [
       {
         path: '/admin/index/account',
-        name: '后台账户',
-        meta: { title: '后台账户列表', noKeepAlive: true },
+        name: '管理员列表',
+        meta: { title: '管理员列表', noKeepAlive: true },
         component: () => import('@/views/account/Account')
       },
       {
