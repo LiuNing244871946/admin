@@ -9,6 +9,7 @@
       </el-form-item>
       <el-form-item class="submit">
         <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="success" @click="addProduct"><i class="el-icon-plus" />添加商品</el-button>
       </el-form-item>
     </el-form>
     <!-- 表格数据 -->
@@ -19,7 +20,10 @@
       <el-table-column label="销售数量" prop="actual_sell_num"/>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="text" style="color: #478FCA" @click="productDetail(scope.row)">详情</el-button>
+          <!-- <el-button type="text" style="color: #478FCA" @click="productDetail(scope.row)">详情</el-button> -->
+          <el-button type="text" style="color: #478FCA" @click="edit(scope.row)">编辑</el-button>
+          <el-button type="text" style="color: #478FCA" @click="handleSku(scope.row)">查看规格</el-button>
+          <el-button type="text" style="color: #478FCA" @click="productDetail(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -104,7 +108,7 @@ export default {
       }).then(response => {
         if (response.code === 200) {
           const result = response.data.productList
-          // that.pagination.pageSize = response.data.pageSize
+          that.pagination.pageSize = response.data.pageSize
           that.pagination.tatal = response.data.totalNum
           that.tableData = result
           that.listLoading = false
@@ -114,6 +118,25 @@ export default {
           that.tableData = []
         }
       })
+    },
+    //添加商品
+    addProduct(){
+      this.$router.push({
+        path: '/admin/product/productList/addProduct'
+      })
+    },
+    //编辑商品
+    edit(data){
+      this.$router.push({
+        path: '/admin/product/productList/addProduct',
+        query: {pid: data.id}
+      })
+    },
+    //产看规格
+    handleSku(){
+      // this.$router.push({
+      //   path: '/admin/product/skuList'
+      // })
     },
     // 查询
     onSubmit() {

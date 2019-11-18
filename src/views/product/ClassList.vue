@@ -111,7 +111,6 @@ export default {
       request({
         url: '/admin/product/listCategory',
         method: 'get',
-        data: formInline
       }).then(response => {
         if (response.code === 200) {
           const result = response.data
