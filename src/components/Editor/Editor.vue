@@ -11,11 +11,11 @@
         :on-error="uploadError"
         :before-upload="beforeUpload">
       </el-upload>
-      <quill-editor 
+      <quill-editor
         class="editor"
         v-model="content"
-        ref="myQuillEditor" 
-        :options="editorOption" 
+        ref="myQuillEditor"
+        :options="editorOption"
         @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
         @change="onEditorChange($event)">
       </quill-editor>
@@ -61,7 +61,13 @@ export default {
   components: {
     quillEditor
   },
-
+  watch: {
+    value(newVal, oldVal) {
+      if (newVal) {
+        this.content = newVal
+      }
+    }
+  },
   data() {
     return {
       content: this.value,
@@ -104,12 +110,9 @@ export default {
     };
   },
   mounted(){
-    console.log(this.value)
     this.$set(this,'content',this.value)
-    console.log(this.content)
   },
   created(){
-    // console.log(this.value)
   },
   methods: {
     onEditorBlur() {
@@ -159,7 +162,7 @@ export default {
     }
   }
 };
-</script> 
+</script>
 
 <style>
 /* .editor {
