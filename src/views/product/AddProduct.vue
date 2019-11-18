@@ -6,56 +6,61 @@
           <el-row :gutter="20">
             <el-col :span="11">
               <el-form-item label="商品名称：">
-                <el-input v-model="ei_form.product_name"></el-input>
+                <el-input v-model="ei_form.product_name" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="商品副标题：">
-                <el-input v-model="ei_form.product_title"></el-input>
+                <el-input v-model="ei_form.product_title" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="设置初始销量：">
-                <el-input v-model="ei_form.init_sell_num"></el-input>
+                <el-input v-model="ei_form.init_sell_num" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="排序：">
-                <el-input v-model="ei_form.sort"></el-input>
+                <el-input v-model="ei_form.sort" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="选择分类：">
                 <el-select v-model="ei_form.category_id" placeholder="请选择">
-                  <el-option v-for="i in classList" :key="i.id" :label="i.category_name" :value="i.id" ></el-option>
+                  <el-option
+                    v-for="i in classList"
+                    :key="i.id"
+                    :label="i.category_name"
+                    :value="i.id"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="商品类型：">
-                <el-select @change="proTypeChange" v-model="ei_form.product_type" placeholder="请选择">
-                  <el-option label="普通商品" value="1" ></el-option>
-                  <el-option label="代理商品" value="2" ></el-option>
+                <el-select v-model="ei_form.product_type" placeholder="请选择" @change="proTypeChange">
+                  <el-option label="普通商品" value="1" />
+                  <el-option label="代理商品" value="2" />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="22">
               <el-form-item label="商品图片：">
                 <el-upload
-                  class="avatar-uploader"
-                  action="https://lv-uncle-api.ishaohuo.cn/index.php/api/upload/uploadImg"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
-                  :before-upload="beforeAvatarUpload">
-                  <img v-if="ei_form.image_urls" :src="ei_form.image_urls" class="avatar">
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  :before-upload="beforeAvatarUpload"
+                  class="avatar-uploader"
+                  action="https://lv-uncle-api.ishaohuo.cn/index.php/api/upload/uploadImg"
+                >
+                  <img v-if="ei_form.image_urls" :src="ei_form.image_urls" class="avatar" >
+                  <i v-else class="el-icon-plus avatar-uploader-icon" />
                 </el-upload>
               </el-form-item>
-
             </el-col>
             <el-col :span="22">
               <el-form-item class="editItem" label="商品详情：">
-                <Editor v-model="ei_form.introduction"/>
+                <Editor v-model="ei_form.introduction" />
               </el-form-item>
             </el-col>
             <el-col :span="22">
@@ -68,73 +73,90 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="商品规格" name="sku">
-        <el-button style="margin-bottom:16px" type="primary" icon="el-icon-plus" @click="addSku">添加规格</el-button>
-        <el-row v-for="i in skuList" :key="i.index" style="border-bottom:1px solid #ddd;padding-top:10px">
-          <el-form  label-width="85px">
+        <el-button
+          style="margin-bottom:16px"
+          type="primary"
+          icon="el-icon-plus"
+          @click="addSku"
+        >添加规格</el-button>
+        <el-row
+          v-for="i in skuList"
+          :key="i.index"
+          style="border-bottom:1px solid #ddd;padding-top:10px"
+        >
+          <el-form label-width="85px">
             <el-col :span="4">
               <el-form-item label="规格名称：">
-                <el-input v-model="i.sku_name"></el-input>
+                <el-input v-model="i.sku_name" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item label="价格：">
-                <el-input v-model="i.product_price"></el-input>
+                <el-input v-model="i.product_price" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item label="原价：">
-                <el-input v-model="i.orginal_price"></el-input>
+                <el-input v-model="i.orginal_price" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item label="库存：">
-                <el-input v-model="i.stock_total"></el-input>
+                <el-input v-model="i.stock_total" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item label="排序：">
-                <el-input v-model="i.sort"></el-input>
+                <el-input v-model="i.sort" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-button style="margin-left:10px">删除</el-button>
               <el-button type="primary" @click="addSkuPost(i)">保存</el-button>
             </el-col>
-            
           </el-form>
         </el-row>
-        
       </el-tab-pane>
       <el-tab-pane label="代理商品基本信息" name="entSet">
         <el-row v-if="ei_form.product_type == 2">
-          <el-form  label-width="200px">
+          <el-form label-width="200px">
             <el-col :span="12">
               <el-form-item label="发起人购买规格选择：">
                 <el-select v-model="ent_form.founder_sku_id" placeholder="请选择">
-                  <el-option v-for="i in entSkuList" :key="i.id" :label="i.sku_name" :value="i.sku_id" ></el-option>
+                  <el-option
+                    v-for="i in entSkuList"
+                    :key="i.id"
+                    :label="i.sku_name"
+                    :value="i.sku_id"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="合伙人购买规格选择：">
                 <el-select v-model="ent_form.partner_sku_id" placeholder="请选择">
-                  <el-option v-for="i in entSkuList" :key="i.id" :label="i.sku_name" :value="i.sku_id" ></el-option>
+                  <el-option
+                    v-for="i in entSkuList"
+                    :key="i.id"
+                    :label="i.sku_name"
+                    :value="i.sku_id"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="省代理佣金比设置：">
-                <el-input v-model="ent_form.province_agent_rate"></el-input>
+                <el-input v-model="ent_form.province_agent_rate" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="市代佣金比例设置：">
-                <el-input v-model="ent_form.city_agent_rate"></el-input>
+                <el-input v-model="ent_form.city_agent_rate" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="区代佣金比例设置：">
-                <el-input v-model="ent_form.district_agent_rate"></el-input>
+                <el-input v-model="ent_form.district_agent_rate" />
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -142,30 +164,26 @@
                 <el-button>返回列表</el-button>
                 <el-button type="primary" @click="addEntSet()">保存</el-button>
               </el-form-item>
-              
             </el-col>
           </el-form>
         </el-row>
-        
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
+/* eslint-disable */
 import request from "@/utils/request";
-import Editor from "@/components/Editor/Editor"
+import Editor from "@/components/Editor/Editor";
 export default {
   components: {
     Editor
-  },
-  computed: {
-    
   },
   data() {
     return {
       classList: [],
       tabName: "eiTab",
-      publicData:{
+      publicData: {
         product_id: ""
       },
       ei_form: {
@@ -175,31 +193,37 @@ export default {
         category_id: "",
         init_sell_num: "",
         introduction: "",
-        product_type: '1',
-        sort:""
+        product_type: "1",
+        sort: ""
       },
-      ent_form:{
-        founder_sku_id:"",//发起人
-        partner_sku_id:"",//合伙人
-        province_agent_rate:"",//S
-        city_agent_rate:"",
-        district_agent_rate:"",
-        brand:""
+      ent_form: {
+        founder_sku_id: "", //发起人
+        partner_sku_id: "", //合伙人
+        province_agent_rate: "", //S
+        city_agent_rate: "",
+        district_agent_rate: "",
+        brand: ""
       },
-      entSkuList:[],
-      skuList:[
-        { sku_name:"", product_price:"",orginal_price:"", stock_total:"", sort:""}
+      entSkuList: [],
+      skuList: [
+        {
+          sku_name: "",
+          product_price: "",
+          orginal_price: "",
+          stock_total: "",
+          sort: ""
+        }
       ]
     };
   },
   mounted() {
-    this.entData()//代理信息设置
+    this.entData(); //代理信息设置
   },
   created() {
     this.getClassList();
-    if(this.$route.query.pid){
-      this.publicData.product_id = this.$route.query.pid
-      this.initEditData()
+    if (this.$route.query.pid) {
+      this.publicData.product_id = this.$route.query.pid;
+      this.initEditData();
     }
   },
   methods: {
@@ -210,7 +234,6 @@ export default {
         method: "get"
       }).then(response => {
         if (response.code === 200) {
-          const result = response.data;
           let data = response.data;
           console.log(data);
           for (let i = 0; i < data.length; i++) {
@@ -221,6 +244,10 @@ export default {
             }
           }
         } else {
+          that.$message({
+            type: 'warning',
+            message: response.msg
+          })
         }
       });
     },
@@ -228,7 +255,7 @@ export default {
 
     //上传成功
     handleAvatarSuccess(res, file) {
-      this.ei_form.image_urls = file.response.filename
+      this.ei_form.image_urls = file.response.filename;
     },
     //上传完文件验证
     beforeAvatarUpload(file) {
@@ -242,8 +269,8 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    proTypeChange(el){
-      this.entData()
+    proTypeChange(el) {
+      this.entData();
     },
     postForm(form, formName) {
       // return
@@ -270,8 +297,8 @@ export default {
         }
       });
     },
-    addProduct(){
-      let that = this
+    addProduct() {
+      let that = this;
       request({
         url: "/admin/product/putProduct",
         method: "post",
@@ -282,24 +309,35 @@ export default {
             message: "提交成功",
             type: "success"
           });
-          that.publicData.product_id = response.data.product_id
-          that.tabName = 'sku'
+          that.publicData.product_id = response.data.product_id;
+          that.tabName = "sku";
         } else {
           this.$message.error(response.msg);
         }
       });
     },
     ////////////////////////////SKU////////////////////////////////////////
-    addSku(){
-      this.skuList.push({ sku_name:"", product_price:"", stock_total:"", sort:""})
+    addSku() {
+      this.skuList.push({
+        sku_name: "",
+        product_price: "",
+        stock_total: "",
+        sort: ""
+      });
     },
-    addSkuPost(skuData){
-      let that = this
-      if(that.publicData.product_id == null || that.publicData.product_id ==""){
-        that.$message.error('请先添加商品基本信息！');
-        return false
+    addSkuPost(skuData) {
+      let that = this;
+      if (
+        that.publicData.product_id == null ||
+        that.publicData.product_id == ""
+      ) {
+        that.$message.error("请先添加商品基本信息！");
+        return false;
       }
-      let skuPostData = {...skuData,...{ product_id: that.publicData.product_id }}
+      let skuPostData = {
+        ...skuData,
+        ...{ product_id: that.publicData.product_id }
+      };
       request({
         url: "/admin/product/putProductSku",
         method: "post",
@@ -310,31 +348,34 @@ export default {
             message: "提交成功",
             type: "success"
           });
-          
         } else {
           this.$message.error(response.msg);
         }
       });
     },
-    entData(){
-      let that = this
-      if(this.ei_form.product_type == 2){
-        console.log(this.ei_form.product_type)
+    entData() {
+      let that = this;
+      if (this.ei_form.product_type == 2) {
+        console.log(this.ei_form.product_type);
         request({
           url: "/admin/product/getProductInfo/" + that.publicData.product_id,
           method: "get"
         }).then(response => {
-          console.log(response)
-          that.initEditData(response.data)
-          that.entSkuList = response.data.skuList
+          console.log(response);
+          that.initEditData(response.data);
+          that.entSkuList = response.data.skuList;
         });
       }
     },
     /////////////////         代理设置       ///////////////////
-    addEntSet(){
-      let that = this
-      let postForm = {...that.ei_form,...that.ent_form,...{id:that.publicData.product_id}}
-      console.log(postForm)
+    addEntSet() {
+      let that = this;
+      let postForm = {
+        ...that.ei_form,
+        ...that.ent_form,
+        ...{ id: that.publicData.product_id }
+      };
+      console.log(postForm);
       request({
         url: "/admin/product/putProduct",
         method: "post",
@@ -345,16 +386,15 @@ export default {
             message: "提交成功",
             type: "success"
           });
-          
         } else {
           this.$message.error(response.msg);
         }
       });
     },
     ////////////////    编辑页面初始化数据     ////////////////////
-    initEditData(data){
-      let that = this
-      if(data){
+    initEditData(data) {
+      let that = this;
+      if (data) {
         this.ei_form = {
           product_name: data.product_name,
           product_title: data.product_title,
@@ -363,17 +403,17 @@ export default {
           init_sell_num: data.init_sell_num,
           introduction: data.introduction,
           product_type: data.product_type,
-          sort:data.sort
-        }
-        this.$set(this.ei_form, 'introduction',data.introduction)
-      }else{
+          sort: data.sort
+        };
+        this.$set(this.ei_form, "introduction", data.introduction);
+      } else {
         request({
           // url: "/admin/product/getProductInfo/6",
           url: "/admin/product/getProductInfo/" + that.publicData.product_id,
           method: "get"
         }).then(response => {
-          console.log(response)
-          let data = response.data
+          console.log(response);
+          let data = response.data;
           this.ei_form = {
             product_name: data.product_name,
             product_title: data.product_title,
@@ -382,14 +422,14 @@ export default {
             init_sell_num: data.init_sell_num,
             introduction: data.introduction,
             product_type: data.product_type,
-            sort:data.sort
-          }
-          that.$set(this.ei_form,'introduction',data.introduction)
-          that.skuList = data.skuList
+            sort: data.sort
+          };
+          that.$set(this.ei_form, "introduction", data.introduction);
+          that.skuList = data.skuList;
         });
       }
-      
-      console.log(this.ei_form)
+
+      console.log(this.ei_form);
     }
   }
 };
@@ -419,7 +459,7 @@ export default {
   height: 178px;
   display: block;
 }
-.editItem .el-form-item__content{
+.editItem .el-form-item__content {
   line-height: 0px;
 }
 </style>

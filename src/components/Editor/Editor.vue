@@ -1,27 +1,29 @@
 <template>
-    <div>
-        <!-- 图片上传组件辅助-->
-      <el-upload
-        class="avatar-uploader productImg"
-        :action="serverUrl"
-        name="file"
-        :headers="header"
-        :show-file-list="false"
-        :on-success="uploadSuccess"
-        :on-error="uploadError"
-        :before-upload="beforeUpload">
-      </el-upload>
-      <quill-editor
-        class="editor"
-        v-model="content"
-        ref="myQuillEditor"
-        :options="editorOption"
-        @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-        @change="onEditorChange($event)">
-      </quill-editor>
-    </div>
+  <div>
+    <!-- 图片上传组件辅助-->
+    <el-upload
+      :action="serverUrl"
+      :headers="header"
+      :show-file-list="false"
+      :on-success="uploadSuccess"
+      :on-error="uploadError"
+      :before-upload="beforeUpload"
+      name="file"
+      class="avatar-uploader productImg"
+    />
+    <quill-editor
+      ref="myQuillEditor"
+      v-model="content"
+      :options="editorOption"
+      class="editor"
+      @blur="onEditorBlur($event)"
+      @focus="onEditorFocus($event)"
+      @change="onEditorChange($event)"
+    />
+  </div>
 </template>
 <script>
+/* eslint-disable */
 // 工具栏配置
 const toolbarOptions = [
   ["bold", "italic", "underline", "strike"], // 加粗 斜体 下划线 删除线
@@ -64,7 +66,7 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal) {
-        this.content = newVal
+        this.content = newVal;
       }
     }
   },
@@ -84,13 +86,13 @@ export default {
               image: function(value) {
                 if (value) {
                   // 触发input框选择图片文件
-                  console.log(value)
+                  console.log(value);
                   document.querySelector(".productImg input").click();
                 } else {
-                    console.log(2222)
+                  console.log(2222);
                   this.quill.format("image", false);
                 }
-              },
+              }
               // link: function(value) {
               //   if (value) {
               //     var href = prompt('请输入url');
@@ -103,17 +105,17 @@ export default {
           }
         }
       },
-      serverUrl: "https://lv-uncle-api.ishaohuo.cn/index.php/api/upload/uploadImg", // 这里写你要上传的图片服务器地址
+      serverUrl:
+        "https://lv-uncle-api.ishaohuo.cn/index.php/api/upload/uploadImg", // 这里写你要上传的图片服务器地址
       header: {
         // token: sessionStorage.token
       } // 有的图片服务器要求请求头需要有token
     };
   },
-  mounted(){
-    this.$set(this,'content',this.value)
+  mounted() {
+    this.$set(this, "content", this.value);
   },
-  created(){
-  },
+  created() {},
   methods: {
     onEditorBlur() {
       //失去焦点事件
@@ -129,14 +131,14 @@ export default {
     // 富文本图片上传前
     beforeUpload() {
       // 显示loading动画
-      console.log('before')
+      console.log("before");
       this.quillUpdateImg = true;
     },
     uploadSuccess(res, file) {
       // res为图片服务器返回的数据
       // 获取富文本组件实例
-    //   console.log(res)
-    //   console.log(file.filename)
+      //   console.log(res)
+      //   console.log(file.filename)
       let quill = this.$refs.myQuillEditor.quill;
       // 如果上传成功
       if (res.code == 200) {
@@ -144,7 +146,7 @@ export default {
         let length = quill.getSelection().index;
         // 插入图片  res.url为服务器返回的图片地址
         // quill.insertEmbed(length, 'image', res.result.url)
-        quill.insertEmbed(length, "image",res.filename);
+        quill.insertEmbed(length, "image", res.filename);
         // 调整光标到最后
         quill.setSelection(length + 1);
       } else {
@@ -156,7 +158,7 @@ export default {
     // 富文本图片上传失败
     uploadError() {
       // loading动画消失
-      console.log('error')
+      console.log("error");
       this.quillUpdateImg = false;
       this.$message.error("图片插入失败");
     }
@@ -169,85 +171,85 @@ export default {
   line-height: normal !important;
   height: 800px;
 } */
-.ql-snow .ql-tooltip[data-mode=link]::before {
+.ql-snow .ql-tooltip[data-mode="link"]::before {
   content: "请输入链接地址:";
 }
 .ql-snow .ql-tooltip.ql-editing a.ql-action::after {
-    border-right: 0px;
-    content: '保存';
-    padding-right: 0px;
+  border-right: 0px;
+  content: "保存";
+  padding-right: 0px;
 }
 
-.ql-snow .ql-tooltip[data-mode=video]::before {
-    content: "请输入视频地址:";
+.ql-snow .ql-tooltip[data-mode="video"]::before {
+  content: "请输入视频地址:";
 }
-.ql-snow .ql-tooltip{
-    left: 100px !important;
+.ql-snow .ql-tooltip {
+  left: 100px !important;
 }
 .ql-snow .ql-picker.ql-size .ql-picker-label::before,
 .ql-snow .ql-picker.ql-size .ql-picker-item::before {
-  content: '14px';
+  content: "14px";
 }
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value=small]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value=small]::before {
-  content: '10px';
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="small"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="small"]::before {
+  content: "10px";
 }
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value=large]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value=large]::before {
-  content: '18px';
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="large"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="large"]::before {
+  content: "18px";
 }
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value=huge]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value=huge]::before {
-  content: '32px';
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="huge"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="huge"]::before {
+  content: "32px";
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item::before {
-  content: '文本';
+  content: "文本";
 }
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
-  content: '标题1';
+  content: "标题1";
 }
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
-  content: '标题2';
+  content: "标题2";
 }
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
-  content: '标题3';
+  content: "标题3";
 }
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="4"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="4"]::before {
-  content: '标题4';
+  content: "标题4";
 }
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="5"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="5"]::before {
-  content: '标题5';
+  content: "标题5";
 }
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="6"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="6"]::before {
-  content: '标题6';
+  content: "标题6";
 }
 
 .ql-snow .ql-picker.ql-font .ql-picker-label::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item::before {
-  content: '标准字体';
+  content: "标准字体";
 }
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=serif]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=serif]::before {
-  content: '衬线字体';
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="serif"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="serif"]::before {
+  content: "衬线字体";
 }
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=monospace]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=monospace]::before {
-  content: '等宽字体';
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="monospace"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before {
+  content: "等宽字体";
 }
 .editor {
-line-height: normal !important;
-position: relative;
+  line-height: normal !important;
+  position: relative;
 }
 .editor .ql-container {
-min-height: 300px;
-height: auto;
+  min-height: 300px;
+  height: auto;
 }
 </style>
