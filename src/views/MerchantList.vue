@@ -9,6 +9,7 @@
       </el-form-item>
       <el-form-item class="submit">
         <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="addEnt('add')">添加代理商</el-button>
       </el-form-item>
     </el-form>
     <!-- 表格数据 -->
@@ -20,7 +21,7 @@
       <el-table-column label="修改时间" prop="modify_date"/>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="text" style="color: #478FCA" @click="handleClick1(scope.row)">详情</el-button>
+          <el-button type="text" style="color: #478FCA" @click="addEnt('edit',scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -35,8 +36,27 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />
     </div>
-    <!-- 详情弹窗 -->
-
+    <!-- 代理商 -->
+    <el-dialog :visible.sync="db_dialog.show" :title="db_dialog.title">
+      <el-form ref="entForm" :model="entForm" label-width="120px">
+        <el-form-item label="代理商名称：">
+          <el-input v-model="entForm.agent_name" />
+        </el-form-item>
+       <el-form-item label="联系人：">
+          <el-input v-model="entForm.contact" />
+        </el-form-item>
+        <el-form-item label="联系电话：">
+          <el-input v-model="entForm.contact_number" />
+        </el-form-item>
+        <el-form-item label="用户名：">
+          <el-input v-model="entForm.username" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="db_dialog.show = false">取 消</el-button>
+        <el-button type="primary" @click="addEntPost">提 交</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -58,6 +78,18 @@ export default {
         pageSizes: [10],
         pageSize: 0,
         tatal: 0
+      },
+      db_dialog:{
+        title:"添加代理商",
+        show: false,
+        isEdit:false,
+        entId:''
+      },
+      entForm:{
+        agent_name:"",
+        contact:"",
+        contact_number:"",
+        username:""
       }
     }
   },
@@ -105,6 +137,57 @@ export default {
     },
     handleClick1() {
 
+    },
+    addEnt(act,row){
+      this.db_dialog.show = true
+      this.db_dialog.entId = ''
+      
+      switch(act) {
+        case 'add':
+          this.db_dialog.title = "添加代理商"
+          this.db_dialog.isEdit = false
+          this.entForm={
+            agent_name:"",
+            contact:"",
+            contact_number:"",
+            username:""
+          }
+          break
+        case 'edit':
+          this.db_dialog.entId = row.id
+          this.db_dialog.title = "修改代理商信息"
+          this.db_dialog.isEdit = true
+          this.entForm={
+            agent_name:row.agent_name,
+            contact:row.contact,
+            contact_number:row.contact_number,
+            username:row.username
+          }
+          break
+      }
+    },
+    addEntPost(){
+      let postData = this.entForm
+      console.log(this.db_dialog.entId)
+      if(this.db_dialog.isEdit){
+        postData = {...postData,...{id : this.db_dialog.entId}}
+      }
+      request({
+        url: '/admin/index/putAgent',
+        method: 'post',
+        data: postData
+      }).then(response => {
+        if (response.code === 200) {
+          this.$message({
+            message: "提交成功",
+            type: "success"
+          });
+          this.db_dialog.show = false
+          this.getTableDatas()
+        } else {
+          this.$message.error(response.msg);
+        }
+      })
     }
   }
 }

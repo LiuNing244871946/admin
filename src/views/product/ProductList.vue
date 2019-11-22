@@ -44,14 +44,18 @@
     >
       <el-table-column label="商品名称" prop="product_name" />
       <el-table-column label="商品标题" prop="product_title" />
-      <el-table-column label="商品类型" prop="regDate" />
+      <el-table-column label="商品类型" prop="product_type" />
       <el-table-column label="销售数量" prop="actual_sell_num" />
+      <el-table-column label="下架/上架" prop="actual_sell_num">
+        <template slot-scope="scope">
+          <el-switch @change="changeSwitch(scope.row)" active-color="#13ce66" inactive-color="#ccc" active-value="1" inactive-value="0" v-model="scope.row.is_marketable"></el-switch>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <!-- <el-button type="text" style="color: #478FCA" @click="productDetail(scope.row)">详情</el-button> -->
           <el-button type="text" style="color: #478FCA" @click="edit(scope.row)">编辑</el-button>
-          <el-button type="text" style="color: #478FCA" @click="handleSku(scope.row)">查看规格</el-button>
-          <el-button type="text" style="color: #478FCA" @click="productDetail(scope.row)">删除</el-button>
+          <el-button type="text" style="color: #478FCA" @click="dele(scope.row)">删除</el-button>
+          <el-button type="text" v-if="scope.row.product_type == 2" style="color: #478FCA" @click="bandSku(scope.row)">绑定规格</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -67,25 +71,24 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <!-- 详情弹窗 -->
-    <el-dialog :visible.sync="dialogVisible" title="商品详情">
-      <el-form ref="formLabelAlign" :model="formLabelAlign" status-icon label-width="100px">
-        <el-form-item label="商品名称:">
-          <span>{{ formLabelAlign.product_name }}</span>
+    <!----  代理商品绑定sku  ---->
+    <el-dialog :visible.sync="db_dialog.show" :title="db_dialog.title">
+      <el-form ref="bandSkuForm" :model="bandSkuForm" label-width="170px">
+        <el-form-item label="发起人购买商品规格：">
+          <el-select style="width:400px" v-model="bandSkuForm.founder_sku_id" placeholder="请选择">
+            <el-option v-for="i in db_dialog.skuList" :key="i.sku_id" :label="i.sku_name" :value="i.sku_id" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="商品标题:">
-          <span>{{ formLabelAlign.product_title }}</span>
-        </el-form-item>
-        <el-form-item label="分类id:">
-          <span>{{ formLabelAlign.category_id }}</span>
-        </el-form-item>
-        <el-form-item label="品牌名称:">
-          <span>{{ formLabelAlign.brand_name }}</span>
-        </el-form-item>
-        <el-form-item label="成交日期:">
-          <span>{{ formLabelAlign.modify_date ? formLabelAlign.modify_date : '-' }}</span>
+       <el-form-item label="合伙人购买商品规格：">
+          <el-select style="width:400px" v-model="bandSkuForm.partner_sku_id" placeholder="请选择">
+            <el-option v-for="i in db_dialog.skuList" :key="i.sku_id" :label="i.sku_name" :value="i.sku_id" />
+          </el-select>
         </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="db_dialog.show = false">取 消</el-button>
+        <el-button type="primary" @click="bandSkuPost">提 交</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -96,17 +99,28 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      switchValue:false,
       formInline: {
         currPage: 1,
-        pageSize: 10
+        pageSize: 15
       },
       tableData: [],
       listLoading: true,
       pagination: {
         currentPage: 1,
-        pageSizes: [10],
+        pageSizes: [15],
         pageSize: 0,
         tatal: 0
+      },
+      bandSkuForm: {
+        founder_sku_id:"",
+        partner_sku_id:"",
+      },
+      db_dialog:{
+        title:"代理商品绑定商品规格",
+        show: false,
+        skuList:[],
+        productid:"",
       },
       formLabelAlign: {
         id: "",
@@ -132,9 +146,8 @@ export default {
       that.listLoading = true;
       const formInline = that.formInline;
       request({
-        url: "/admin/product/listProduct",
-        method: "get",
-        data: formInline
+        url: "/admin/product/listProduct?pageSize="+this.formInline.pageSize+"&currPage="+this.formInline.currPage,
+        method: "get"
       }).then(response => {
         if (response.code === 200) {
           const result = response.data.productList;
@@ -162,11 +175,33 @@ export default {
         query: { pid: data.id }
       });
     },
-    //产看规格
-    handleSku() {
-      // this.$router.push({
-      //   path: '/admin/product/skuList'
-      // })
+    //获取规格
+    bandSku(row) {
+      console.log(row)
+      this.bandSkuForm.partner_sku_id = row.partner_sku_id
+      this.bandSkuForm.founder_sku_id = row.founder_sku_id
+      this.db_dialog.productid = row.id
+      this.db_dialog.skuList = row.skuList
+      this.db_dialog.show = true
+    },
+    //绑定商品规格id
+    bandSkuPost(){
+      let that = this
+      request({
+        url: "/admin/product/setAgentProductSku/" + that.db_dialog.productid,
+        method: "post",
+        data:this.bandSkuForm
+      }).then(response => {
+        if (response.code === 200) {
+          this.$message({
+            message: "绑定成功",
+            type: "success"
+          });
+          this.db_dialog.show = false
+        }else{
+          this.$message.error(response.msg);
+        }
+      });
     },
     // 查询
     onSubmit() {
@@ -183,17 +218,60 @@ export default {
       that.formInline.page = val;
       that.getTableDatas();
     },
-    productDetail(data) {
-      const that = this;
-      that.dialogVisible = true;
-      request({
-        url: "/admin/product/getProductInfo/" + data.id,
-        method: "get"
-      }).then(response => {
-        if (response.code === 200) {
-          const res = response.data;
-          that.formLabelAlign = Object.assign({}, res);
-        }
+    changeSwitch(row){
+      let state = null
+      console.log(parseInt(row.is_marketable))
+      if(parseInt(row.is_marketable)==0){
+        state = 0
+      }else{
+        state = 1
+      }
+      console.log(state)
+      
+      this.$confirm('确认修改？')
+      .then(_ => {
+        request({
+          url: "/admin/product/setProductStatus/" + row.id,
+          method: "post",
+          data:{operate_type:"market",set_value:state}
+        }).then(response => {
+          if (response.code === 200) {
+            this.$message({
+              message: "修改成功",
+              type: "success"
+            });
+            this.getTableDatas() 
+          }else{
+            this.$message.error(response.msg);
+          }
+        });
+        done();
+      })
+      .catch(_ => {
+        this.getTableDatas() 
+      });
+    },
+    dele(row){
+      this.$confirm('确定删除商品？').then(_ => {
+        request({
+          url: "/admin/product/setProductStatus/" + row.id,
+          method: "post",
+          data:{operate_type:"delete",set_value:1}
+        }).then(response => {
+          if (response.code === 200) {
+            this.$message({
+              message: "删除成功",
+              type: "success"
+            });
+            this.getTableDatas() 
+          }else{
+            this.$message.error(response.msg);
+          }
+        });
+        done();
+      })
+      .catch(_ => {
+
       });
     }
   }
@@ -201,4 +279,7 @@ export default {
 </script>
 
 <style lang="scss">
+.el-dialog{
+  width: 650px
+}
 </style>
