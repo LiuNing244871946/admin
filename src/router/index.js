@@ -65,6 +65,24 @@ export const constantRouterMap = [
         name: '商品分类列表',
         meta: { title: '商品分类列表', noKeepAlive: true },
         component: () => import('@/views/product/ClassList')
+      },
+      {
+        path: '/admin/product/productActivity',
+        name: '商品活动列表',
+        meta: { title: '商品活动列表', noKeepAlive: true },
+        component: () => import('@/views/product/ProductActive')
+      },
+      {
+        path: '/admin/product/swipe',
+        name: '轮播列表',
+        meta: { title: '轮播列表', noKeepAlive: true },
+        component: () => import('@/views/product/Swipe')
+      },
+      {
+        path: '/admin/product/productActivity/ActiveDetail',
+        name: '活动详情',
+        meta: { title: '活动详情', noKeepAlive: true },
+        component: () => import('@/views/product/ActiveDetail')
       }
     ]
   },

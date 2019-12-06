@@ -44,7 +44,12 @@
     >
       <el-table-column label="商品名称" prop="product_name" />
       <el-table-column label="商品标题" prop="product_title" />
-      <el-table-column label="商品类型" prop="product_type" />
+      <!-- <el-table-column label="商品类型" prop="product_type" /> -->
+      <el-table-column prop="image_urls" label="商品图片">
+        <template slot-scope="scope">
+          <img @click="showImg((scope.row.image_urls).split('@@')[0])" :src="(scope.row.image_urls).split('@@')[0]" width="80" >
+        </template>
+      </el-table-column>
       <el-table-column label="销售数量" prop="actual_sell_num" />
       <el-table-column label="下架/上架" prop="actual_sell_num">
         <template slot-scope="scope">
@@ -90,6 +95,10 @@
         <el-button type="primary" @click="bandSkuPost">提 交</el-button>
       </div>
     </el-dialog>
+    <!---图片查看器--->
+    <el-dialog :visible.sync="im_dialog.show" title="查看图片">
+      <img width="100%" :src="im_dialog.src" alt="">
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -102,7 +111,7 @@ export default {
       switchValue:false,
       formInline: {
         currPage: 1,
-        pageSize: 15
+        pageSize: 10
       },
       tableData: [],
       listLoading: true,
@@ -121,6 +130,11 @@ export default {
         show: false,
         skuList:[],
         productid:"",
+      },
+      im_dialog:{
+        show: false,
+        title: "",
+        src:""
       },
       formLabelAlign: {
         id: "",
@@ -150,10 +164,12 @@ export default {
         method: "get"
       }).then(response => {
         if (response.code === 200) {
+          console.log(response)
           const result = response.data.productList;
           that.pagination.pageSize = response.data.pageSize;
           that.pagination.tatal = response.data.totalNum;
-          that.tableData = result;
+          this.$set(that,'tableData',result)
+          // that.tableData = result;
           that.listLoading = false;
         } else {
           that.pagination.pageSize = 0;
@@ -206,16 +222,16 @@ export default {
     // 查询
     onSubmit() {
       const that = this;
-      that.formInline.page = 1;
+      that.formInline.currPage = 1;
       that.getTableDatas();
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`)
     },
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`)
+      console.log(val)
       const that = this;
-      that.formInline.page = val;
+      that.formInline.currPage = val;
       that.getTableDatas();
     },
     changeSwitch(row){
@@ -226,7 +242,6 @@ export default {
       }else{
         state = 1
       }
-      console.log(state)
       
       this.$confirm('确认修改？')
       .then(_ => {
@@ -250,6 +265,10 @@ export default {
       .catch(_ => {
         this.getTableDatas() 
       });
+    },
+    showImg(url){
+      this.im_dialog.src = url
+      this.im_dialog.show = true
     },
     dele(row){
       this.$confirm('确定删除商品？').then(_ => {
