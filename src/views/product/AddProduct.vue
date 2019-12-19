@@ -262,14 +262,7 @@ export default {
       }).then(response => {
         if (response.code === 200) {
           let data = response.data;
-          console.log(data);
-          for (let i = 0; i < data.length; i++) {
-            if (data[i].subCategory && data[i].subCategory.length > 0) {
-              for (let j = 0; j < data[i].subCategory.length; j++) {
-                that.classList.push(data[i].subCategory[j]);
-              }
-            }
-          }
+          that.classList = data
         } else {
           that.$message({
             type: 'warning',

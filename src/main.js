@@ -10,6 +10,7 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import router from './router'
 import store from './store'
+import { formatDate } from './utils/auth'
 import '@/icons' // icon
 import '@/permission' // permission control
 
@@ -25,3 +26,5 @@ new Vue({
   store,
   render: h => h(App)
 })
+
+Vue.prototype.$formatDate = formatDate

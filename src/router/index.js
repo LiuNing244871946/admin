@@ -118,7 +118,7 @@ export const constantRouterMap = [
         path: '/admin/user/userList',
         name: '会员列表',
         meta: { title: '会员列表', noKeepAlive: true },
-        component: () => import('@/views/UserList')
+        component: () => import('@/views/user/UserList')
       }
     ]
   },
@@ -131,9 +131,42 @@ export const constantRouterMap = [
     children: [
       {
         path: '/admin/order/orderList',
-        name: '订单列表',
-        meta: { title: '订单列表', noKeepAlive: true },
-        component: () => import('@/views/OrderList')
+        name: '已付款订单列表',
+        meta: { title: '已付款订单列表', noKeepAlive: true },
+        component: () => import('@/views/order/OrderList')
+      },
+      {
+        path: '/admin/order/originalOrderList',
+        name: '原始订单列表',
+        meta: { title: '原始订单列表', noKeepAlive: true },
+        component: () => import('@/views/order/originalOrderList')
+      },
+      {
+        path: '/admin/order/orderDetail',
+        name: '订单详情',
+        meta: { title: '订单详情', noKeepAlive: true },
+        component: () => import('@/views/order/OrderDetail')
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/admin/commission/listCommissionSetting',
+    name: 'yj',
+    meta: { title: '设置' },
+    children: [
+      {
+        path: '/admin/commission/listCommission',
+        name: '佣金综合设置',
+        meta: { title: '佣金综合设置', noKeepAlive: true },
+        component: () => import('@/views/commission/CommissionList')
+      },
+      {
+        path: '/admin/commission/listCommissionSetting',
+        name: '佣金提现设置',
+        meta: { title: '佣金提现设置', noKeepAlive: true },
+        component: () => import('@/views/commission/CommissionListSetting')
       }
     ]
   },
@@ -146,9 +179,30 @@ export const constantRouterMap = [
     children: [
       {
         path: '/admin/ent/entList',
+        name: '代理商列表',
+        meta: { title: '代理商列表', noKeepAlive: true },
+        component: () => import('@/views/ent/MerchantList')
+      },
+      {
+        path: '/admin/ent/entUserList',
         name: '代理列表',
         meta: { title: '代理列表', noKeepAlive: true },
-        component: () => import('@/views/MerchantList')
+        component: () => import('@/views/ent/EntUserList')
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/admin/withdraw/withdrawList',
+    name: 'tx',
+    meta: { title: '提现' },
+    children: [
+      {
+        path: '/admin/withdraw/withdrawList',
+        name: '提现申请列表',
+        meta: { title: '提现申请列表', noKeepAlive: true },
+        component: () => import('@/views/withdraw/WithdrawList')
       }
     ]
   },

@@ -17,8 +17,16 @@
       <el-table-column label="代理商名称" prop="agent_name"/>
       <el-table-column label="联系方式" prop="contact_number"/>
       <el-table-column label="用户名" prop="username"/>
-      <el-table-column label="创建时间" prop="create_date"/>
-      <el-table-column label="修改时间" prop="modify_date"/>
+      <el-table-column label="创建时间" prop="create_date">
+        <template slot-scope="scope">
+          <span>{{$formatDate(scope.row.create_date)}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改时间" prop="modify_date">
+        <template slot-scope="scope">
+          <span>{{$formatDate(scope.row.modify_date)}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" style="color: #478FCA" @click="addEnt('edit',scope.row)">编辑</el-button>

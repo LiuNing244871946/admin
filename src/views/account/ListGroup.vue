@@ -44,8 +44,16 @@
       element-loading-text="拼命加载中"
     >
       <el-table-column label="分组名称" prop="group_name" />
-      <el-table-column label="创建日期" prop="create_date" />
-      <el-table-column label="最后修改日期" prop="modify_date" />
+      <el-table-column label="创建日期" prop="create_date">
+        <template slot-scope="scope">
+          <span>{{$formatDate(scope.row.create_date)}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="最后修改日期" prop="modify_date">
+        <template slot-scope="scope">
+          <span>{{$formatDate(scope.row.modify_date)}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" style="color: #478FCA" @click="handleRow(scope.row)">操作</el-button>
