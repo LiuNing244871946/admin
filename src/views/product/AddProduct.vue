@@ -2,10 +2,10 @@
   <div class="box">
     <el-tabs v-model="tabName" @tab-click="tabClick">
       <el-tab-pane label="商品基本信息" name="eiTab">
-        <el-form ref="ei_form" :model="ei_form" label-width="140px">
+        <el-form v-if="tabName == 'eiTab'" ref="ei_form" :rules="rules" :model="ei_form" label-width="140px">
           <el-row :gutter="20">
             <el-col :span="11">
-              <el-form-item label="商品名称：">
+              <el-form-item label="商品名称：" prop="product_name">
                 <el-input v-model="ei_form.product_name" />
               </el-form-item>
             </el-col>
@@ -25,7 +25,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="选择分类：">
+              <el-form-item label="选择分类：" prop="category_id">
                 <el-select v-model="ei_form.category_id" placeholder="请选择">
                   <el-option
                     v-for="i in classList"
@@ -52,57 +52,33 @@
                 </el-select>
               </el-form-item>
             </el-col>
-              <el-col v-if="ei_form.product_type == 2" :span="11">
-                <el-form-item label="省代理佣金比设置：">
-                  <el-input v-model="ei_form.province_agent_rate" />
-                </el-form-item>
-              </el-col>
-              <el-col v-if="ei_form.product_type == 2" :span="11">
-                <el-form-item label="市代佣金比例设置：">
-                  <el-input v-model="ei_form.city_agent_rate" />
-                </el-form-item>
-              </el-col>
-              <el-col v-if="ei_form.product_type == 2" :span="11">
-                <el-form-item label="区代佣金比例设置：">
-                  <el-input v-model="ei_form.district_agent_rate" />
-                </el-form-item>
-              </el-col>
+
             <el-col :span="22">
               <el-form-item label="商品图片：">
-                <!-- <el-upload
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
-                  :before-upload="beforeAvatarUpload"
-                  class="avatar-uploader"
-                  action="https://lv-uncle-api.ishaohuo.cn/index.php/api/upload/uploadImg"
-                >
-                  <img v-if="ei_form.image_urls" :src="ei_form.image_urls" class="avatar" >
-                  <i v-else class="el-icon-plus avatar-uploader-icon" />
-                </el-upload> -->
                 <el-upload
-                  action="https://lv-uncle-api.ishaohuo.cn/index.php/api/upload/uploadImg"
-                  list-type="picture-card"
                   :file-list="fileList"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload"
                   :on-preview="handlePictureCardPreview"
-                  :on-remove="handleRemove">
-                  <i class="el-icon-plus"></i>
+                  :on-remove="handleRemove"
+                  action="https://lv-uncle-api.ishaohuo.cn/index.php/api/upload/uploadImg"
+                  list-type="picture-card">
+                  <i class="el-icon-plus"/>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="dialogImageUrl" alt="">
+                  <img :src="dialogImageUrl" width="100%" alt="">
                 </el-dialog>
               </el-form-item>
             </el-col>
             <el-col :span="22">
-              <el-form-item class="editItem" label="商品详情：">
+              <el-form-item class="editItem" label="商品详情：" prop="introduction">
                 <Editor v-model="ei_form.introduction" />
               </el-form-item>
             </el-col>
             <el-col :span="22">
               <el-form-item>
                 <el-button>返回商品列表</el-button>
-                <el-button type="primary" @click="addProduct">立即添加</el-button>
+                <el-button :disabled="productPostState" type="primary" @click="addProduct">立即添加</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -114,27 +90,27 @@
           <el-form label-width="85px">
             <el-col :span="4">
               <el-form-item label="规格名称：">
-                <el-input disabled v-model="i.sku_name" />
+                <el-input v-model="i.sku_name" disabled />
               </el-form-item>
             </el-col>
             <el-col :span="4">
-              <el-form-item label="价格：">
-                <el-input disabled v-model="i.product_price" />
+              <el-form-item label="价格：" >
+                <el-input v-model="i.product_price" disabled />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item label="原价：">
-                <el-input disabled v-model="i.orginal_price" />
+                <el-input v-model="i.orginal_price" disabled />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item label="库存：">
-                <el-input disabled v-model="i.stock_total" />
+                <el-input v-model="i.stock_total" disabled />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item label="排序：">
-                <el-input disabled v-model="i.sort" />
+                <el-input v-model="i.sort" disabled />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -146,22 +122,22 @@
       </el-tab-pane>
     </el-tabs>
     <!--   添加sku  -->
-    <el-dialog :title="db_dialog.title" :visible.sync="db_dialog.show">
-      <el-form :model="skuForm" label-width="100px">
-        <el-form-item label="规格名称：">
-          <el-input v-model="skuForm.sku_name"></el-input>
+    <el-dialog v-if="db_dialog.show" :title="db_dialog.title" :visible.sync="db_dialog.show">
+      <el-form ref="skuForm" :model="skuForm" :rules="rules" label-width="100px">
+        <el-form-item label="规格名称：" prop="sku_name">
+          <el-input v-model="skuForm.sku_name"/>
         </el-form-item>
-        <el-form-item label="价格：">
-          <el-input v-model="skuForm.product_price"></el-input>
+        <el-form-item label="价格：" prop="product_price">
+          <el-input v-model="skuForm.product_price"/>
         </el-form-item>
-        <el-form-item label="原价：">
-          <el-input v-model="skuForm.orginal_price"></el-input>
+        <el-form-item label="原价：" prop="orginal_price">
+          <el-input v-model="skuForm.orginal_price"/>
         </el-form-item>
-        <el-form-item label="库存：">
-          <el-input v-model="skuForm.stock_total"></el-input>
+        <el-form-item label="库存：" prop="stock_total">
+          <el-input v-model="skuForm.stock_total"/>
         </el-form-item>
-        <el-form-item label="排序：">
-          <el-input v-model="skuForm.sort"></el-input>
+        <el-form-item label="排序：" prop="sort">
+          <el-input v-model="skuForm.sort"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -181,8 +157,40 @@ export default {
   },
   data() {
     return {
+      productPostState: false,
       fileList: [],
-
+      rules: {
+        product_name: [
+          { required: true, message: '请输入商品名称', trigger: 'blur' }
+        ],
+        category_id: [
+          { required: true, message: '请选择用商品分类', trigger: 'change' }
+        ],
+        init_sell_num: [
+          { required: true, message: '请设置初始销量', trigger: 'blur' }
+        ],
+        fileList: [
+          { required: true, message: '请添加商品图片', trigger: 'blur' }
+        ],
+        introduction: [
+          { required: true, message: '请编辑商品详情', trigger: 'blur' }
+        ],
+        sku_name: [
+          { required: true, message: '请编辑商品规格名称', trigger: 'blur' }
+        ],
+        product_price: [
+          { required: true, message: '请编辑规格现价', trigger: 'blur' }
+        ],
+        orginal_price: [
+          { required: true, message: '请编辑规格原价', trigger: 'blur' }
+        ],
+        stock_total: [
+          { required: true, message: '请编辑该规格下商品库存量', trigger: 'blur' }
+        ],
+        sort: [
+          { required: true, message: '请编辑排序', trigger: 'blur' }
+        ],
+      },
       classList: [],
       tabName: "eiTab",
       publicData: {
@@ -198,9 +206,9 @@ export default {
         product_type: "1",
         sort: "",
         brand:"",
-        province_agent_rate:"0",
-        city_agent_rate:"0",
-        district_agent_rate:"0"
+        // province_agent_rate:"0",
+        // city_agent_rate:"0",
+        // district_agent_rate:"0"
       },
       isEdit:false,
       skuList: [],
@@ -244,7 +252,6 @@ export default {
       }).then(response => {
         if (response.code === 200) {
           let data = response.data;
-          console.log(data)
           this.bandList = data.sysUserList
         } else {
           that.$message({
@@ -272,8 +279,18 @@ export default {
       });
     },
     tabClick() {},
-
-
+    resetForm() {
+      this.$nextTick(()=>{
+        this.$refs['ei_form'].resetFields();
+        this.fileList = []
+        
+      })                
+    },
+    resetFormSku() {
+      this.$nextTick(()=>{
+        this.$refs['skuForm'].resetFields();
+      })                
+    },
     handleRemove(file, fileList) {
       let arr= []
       if(fileList.length>0){
@@ -293,7 +310,6 @@ export default {
 
     //上传成功
     handleAvatarSuccess(res, file) {
-      console.log(res)
       // this.ei_form.image_urls = this.ei_form.image_urls + file.response.filename + "@@";
       let obj = {url:file.response.filename}
       this.fileList.push(obj)
@@ -313,36 +329,13 @@ export default {
     // proTypeChange(el) {
     //   this.entData();
     // },
-    postForm(form, formName) {
-      // return
-      let that = this;
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          request({
-            url: "/admin/product/putCategory",
-            method: "post",
-            data: form
-          }).then(response => {
-            if (response.code === 200) {
-              this.$message({
-                message: "提交成功",
-                type: "success"
-              });
-              that.iv_dialog.show = false;
-              this.getTableDatas();
-              that.resetForm(formName);
-            } else {
-              this.$message.error(response.msg);
-            }
-          });
-        }
-      });
-    },
     addProduct() {
       let that = this;
-      // let str = this.ei_form.image_urls
-      // this.ei_form.image_urls =  str.slice(0,str.length-2)
       let imgStr = ""
+      if(this.fileList.length==0){
+        this.$message.error("请上传商品图片");
+        return false
+      }
       for(let i=0;i<this.fileList.length;i++){
         imgStr = imgStr + this.fileList[i].url + "@@"
       }
@@ -352,25 +345,32 @@ export default {
       if(that.publicData.product_id){
         postData = { ...{id:that.publicData.product_id},...that.ei_form }
       }
-      request({
-        url: "/admin/product/putProduct",
-        method: "post",
-        data: postData
-      }).then(response => {
-        if (response.code === 200) {
-          this.$message({
-            message: "提交成功",
-            type: "success"
+      this.$refs["ei_form"].validate(valid => {
+        if (valid) {
+          request({
+            url: "/admin/product/putProduct",
+            method: "post",
+            data: postData
+          }).then(response => {
+            if (response.code === 200) {
+              this.$message({
+                message: "提交成功",
+                type: "success"
+              });
+              that.publicData.product_id = response.data.product_id;
+              this.tabName = "sku";
+              this.productPostState = true
+            } else {
+              this.$message.error(response.msg);
+            }
           });
-          that.publicData.product_id = response.data.product_id;
-          that.tabName = "sku";
-        } else {
-          this.$message.error(response.msg);
         }
-      });
+      })
+      
     },
     ////////////////////////////SKU////////////////////////////////////////
     addSku(act,row) {
+
       switch(act) {
         case 'add':
           this.db_dialog.show = true
@@ -382,7 +382,6 @@ export default {
           this.db_dialog.isEdit = false
           break
         case 'edit':
-          console.log(row)
           this.skuForm.sku_name = row.sku_name
           this.skuForm.product_price = row.product_price
           this.skuForm.orginal_price = row.orginal_price
@@ -404,22 +403,28 @@ export default {
       if(that.db_dialog.isEdit){
         postData = {...{id: this.db_dialog.skuId},...postData}
       }
-      request({
-        url: "/admin/product/putProductSku",
-        method: "post",
-        data: postData
-      }).then(response => {
-        if (response.code === 200) {
-          this.$message({
-            message: "提交成功",
-            type: "success"
+      this.$refs["skuForm"].validate(valid => {
+        if (valid) {
+          request({
+            url: "/admin/product/putProductSku",
+            method: "post",
+            data: postData
+          }).then(response => {
+            if (response.code === 200) {
+              this.$message({
+                message: "提交成功",
+                type: "success"
+              });
+              this.resetFormSku()
+              this.db_dialog.show = false
+              this.initEditData()
+            } else {
+              this.$message.error(response.msg);
+            }
           });
-          this.db_dialog.show = false
-          this.initEditData()
-        } else {
-          this.$message.error(response.msg);
         }
-      });
+      })
+      
     },
     ////////////////    编辑页面初始化数据     ////////////////////
     initEditData() {
@@ -428,13 +433,15 @@ export default {
           url: "/admin/product/getProductInfo/" + that.publicData.product_id,
           method: "get"
         }).then(response => {
-          console.log(response);
           this.fileList = []
-          let arr = (response.data.image_urls).split("@@")
-          for(let i=0;i<arr.length;i++){
-            let obj = {url:arr[i]}
-            this.fileList.push(obj)
+          if(response.data.image_urls!==""){
+            let arr = (response.data.image_urls).split("@@")
+            for(let i=0;i<arr.length;i++){
+              let obj = {url:arr[i]}
+              this.fileList.push(obj)
+            }
           }
+          
           this.ei_form = {
             product_name: response.data.product_name,
             product_title: response.data.product_title,
@@ -444,9 +451,9 @@ export default {
             product_type: response.data.product_type,
             sort: response.data.sort,
             brand: response.data.brand,
-            province_agent_rate: response.data.province_agent_rate,
-            city_agent_rate: response.data.city_agent_rate,
-            district_agent_rate: response.data.district_agent_rate
+            // province_agent_rate: response.data.province_agent_rate,
+            // city_agent_rate: response.data.city_agent_rate,
+            // district_agent_rate: response.data.district_agent_rate
           };
           let imgUrl = (response.data.image_urls).split("@@")
           this.$set(this, "isEdit", true)

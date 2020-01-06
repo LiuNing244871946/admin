@@ -24,6 +24,7 @@ import Layout from '../views/layout/Layout'
 **/
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
+  { path: '/changePs', component: () => import('@/views/password/Changeps'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
 
   {
@@ -31,12 +32,12 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/admin/index/listMenu',
     name: 'admin',
-    meta: { title: '系统管理' },
+    meta: { title: '桌面' },
     children: [
       {
         path: '/admin/index/listMenu',
-        name: '菜单管理',
-        meta: { title: '菜单管理', noKeepAlive: true },
+        name: '统计',
+        meta: { title: '统计', noKeepAlive: true },
         component: () => import('@/views/Menu')
       }
     ]
@@ -59,6 +60,12 @@ export const constantRouterMap = [
         name: '添加商品',
         meta: { title: '添加商品', noKeepAlive: true },
         component: () => import('@/views/product/AddProduct')
+      },
+      {
+        path: '/admin/product/productList/setAgentProductCommissionSetting',
+        name: '设置商品佣金规则',
+        meta: { title: '设置商品佣金规则', noKeepAlive: true },
+        component: () => import('@/views/product/setAgentProductCommissionSetting')
       },
       {
         path: '/admin/product/classList',
@@ -136,16 +143,22 @@ export const constantRouterMap = [
         component: () => import('@/views/order/OrderList')
       },
       {
-        path: '/admin/order/originalOrderList',
+        path: '/admin/order/OriginalOrderList',
         name: '原始订单列表',
         meta: { title: '原始订单列表', noKeepAlive: true },
-        component: () => import('@/views/order/originalOrderList')
+        component: () => import('@/views/order/OriginalOrderList')
       },
       {
         path: '/admin/order/orderDetail',
-        name: '订单详情',
-        meta: { title: '订单详情', noKeepAlive: true },
+        name: '已付款订单详情',
+        meta: { title: '已付款订单详情', noKeepAlive: true },
         component: () => import('@/views/order/OrderDetail')
+      },
+      {
+        path: '/admin/order/originalOrderDetail',
+        name: '原始订单详情',
+        meta: { title: '原始订单详情', noKeepAlive: true },
+        component: () => import('@/views/order/OriginalOrderDetail')
       }
     ]
   },
@@ -168,6 +181,8 @@ export const constantRouterMap = [
         meta: { title: '佣金提现设置', noKeepAlive: true },
         component: () => import('@/views/commission/CommissionListSetting')
       }
+
+      // userLog
     ]
   },
   {
@@ -203,6 +218,18 @@ export const constantRouterMap = [
         name: '提现申请列表',
         meta: { title: '提现申请列表', noKeepAlive: true },
         component: () => import('@/views/withdraw/WithdrawList')
+      },
+      {
+        path: '/admin/withdraw/rechargeList',
+        name: '充值列表',
+        meta: { title: '充值列表', noKeepAlive: true },
+        component: () => import('@/views/withdraw/rechargeList')
+      },
+      {
+        path: '/admin/withdraw/userLog',
+        name: '佣金列表',
+        meta: { title: '佣金列表', noKeepAlive: true },
+        component: () => import('@/views/withdraw/UserLog')
       }
     ]
   },

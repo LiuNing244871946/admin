@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <h3 class="title">后台管理系统</h3>
+      <h3 class="title">修改密码</h3>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -22,6 +22,8 @@
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="pwdType === 'password'?'eye-close':'eye'" />
         </span>
+
+
       </el-form-item>
       <el-form-item>
         <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
@@ -122,9 +124,6 @@ export default {
           return false
         }
       })
-    },
-    goChangePs(){
-      // this.$router.push('/changePs')
     }
   }
 }

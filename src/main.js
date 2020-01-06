@@ -15,7 +15,8 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import 'font-awesome/css/font-awesome.css'
-
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false

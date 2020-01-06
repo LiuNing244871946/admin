@@ -37,21 +37,21 @@
     </el-table>
 
     <!-- 添加分组弹窗 -->
-    <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title" >
-      <el-form ref="addForm" :model="addForm" label-width="110px">
-        <el-form-item label="代理人数量">
+    <el-dialog v-if="iv_dialog.show" :visible.sync="iv_dialog.show" :title="iv_dialog.title" >
+      <el-form ref="addForm" :model="addForm" label-width="120px">
+        <el-form-item :rules="[{ required: true, message: '请编辑代理人数量', trigger: 'blur' }]" label="代理人数量：" prop="agent_num">
           <el-input v-model="addForm.agent_num" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="自购件数">
+        <el-form-item :rules="[{ required: true, message: '请编辑自购件数', trigger: 'blur' }]" label="自购件数：" prop="condition1">
           <el-input v-model="addForm.condition1" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="推荐人数">
+        <el-form-item :rules="[{ required: true, message: '请编辑推荐人数：：', trigger: 'blur' }]" label="推荐人数：" prop="condition2">
           <el-input v-model="addForm.condition2" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="总额佣金比例">
+        <el-form-item :rules="[{ required: true, message: '请编辑总额佣金比例', trigger: 'blur' }]" label="总额佣金比例：" prop="all_commission_rate">
           <el-input v-model="addForm.all_commission_rate" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="单人佣金比例">
+        <el-form-item :rules="[{ required: true, message: '请编辑单人佣金比例', trigger: 'blur' }]" label="单人佣金比例：" prop="single_commission_rate">
           <el-input v-model="addForm.single_commission_rate" auto-complete="off" />
         </el-form-item>
         <el-form-item style="display:block;text-align:center;" label-width="0px">

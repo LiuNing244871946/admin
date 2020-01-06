@@ -47,7 +47,7 @@
       <el-table-column label="代理类型" prop="agent_type_desc" />
       <el-table-column label="最后修改日期" prop="modify_date">
         <template slot-scope="scope">
-          <span>{{$formatDate(scope.row.modify_date)}}</span>
+          <span>{{ $formatDate(scope.row.modify_date) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -69,7 +69,7 @@
       />
     </div>
     <!-- 添加分组弹窗 -->
-    <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title">
+    <el-dialog v-if="iv_dialog.show" :visible.sync="iv_dialog.show" :title="iv_dialog.title">
       <el-form ref="addForm" :model="addForm" label-width="90px">
         <el-form-item label="分组名：">
           <el-input v-model="addForm.group_name" auto-complete="off" />

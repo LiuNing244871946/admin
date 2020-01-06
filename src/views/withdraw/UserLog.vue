@@ -20,7 +20,7 @@
         <el-input
           v-model="query.keyword"
           type="text"
-          placeholder="请输入提现单号或手机号"
+          placeholder="请输入订单号或手机号"
           clearable
           @keyup.enter.native="onSubmit"
         />
@@ -38,121 +38,82 @@
       </el-form-item>
     </el-form>
     <!-- 表格数据 -->
-    <el-tabs v-model="tabs" type="border-card" @tab-click="tabClick($event)">
-      <el-tab-pane v-for="(item,index) in paneList" :key="index" :label="item.label" :name="item.name">
-        <el-table
-          v-loading="listLoading"
-          :data="tableData"
-          fit
-          show-header
-          empty-text="暂无数据"
-          highlight-current-row
-          element-loading-text="拼命加载中"
-        >
-          <el-table-column label="提现编号" prop="withdraw_number" width="100px"/>
-          <el-table-column label="提现用户" prop="nick_name">
-            <template slot-scope="scope">
-              <div>
-                <img :src="scope.row.headimgurl" alt="" style="width:80px">
-                <p>{{ scope.row.nick_name }}/{{ scope.row.exhibit_id }}</p>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="提现信息" prop="nick_name">
-            <template slot-scope="scope">
-              <p>提现类型：余额</p>
-              <p>提现金额：{{ scope.row.amount }}</p>
-              <p>手续费：{{ scope.row.fee_amount }}</p>
-              <p>到账金额：{{ scope.row.actual_amount }}</p>
-            </template>
-          </el-table-column>
-          <el-table-column label="审核信息" prop="nick_name">
-            <template slot-scope="scope">
-              <p>审核人员：{{ scope.row.approve_user_name }}</p>
-              <p v-if="scope.row.approve_status!='0'">审核时间：<br><span style="font-size:12px">{{ $formatDate(scope.row.approve_time) }}</span></p>
-              <p>审核状态：
-                <el-tag v-if="scope.row.approve_status=='0'" type="info">未处理</el-tag>
-                <el-tag v-else-if="scope.row.approve_status=='1'" type="success">审核通过</el-tag>
-                <el-tag v-else-if="scope.row.approve_status=='2'" type="warning">审核拒绝</el-tag>
-                <el-tag v-else-if="scope.row.approve_status=='3'">已转账</el-tag>
-              </p>
-            </template>
-          </el-table-column>
-          <el-table-column label="用户联系方式" prop="phone" />
-          <el-table-column label="申请发起时间" prop="create_date">
-            <template slot-scope="scope">
-              <span>{{ $formatDate(scope.row.create_date) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="备注" prop="approve_msg" />
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button v-if="scope.row.approve_status=='0'" style="color: #478FCA" @click="handleRow(scope.row,1)">审核</el-button>
-              <el-button v-if="scope.row.approve_status=='1'" style="color: #478FCA" @click="handleRow(scope.row,2)">打款</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="block" align="center" style="margin-top:20px;padding-bottom:40px;">
-          <el-pagination
-            :current-page="pagination.currentPage"
-            :page-size="pagination.pageSize"
-            :total="pagination.tatal"
-            layout="total, prev, pager, next"
-            @current-change="handleCurrentChange"/>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
     <el-table
-      style="display:none"
-      :data="tableDataExcel"
-      id="out-table"
+      v-loading="listLoading"
+      :data="tableData"
+      fit
       show-header
+      empty-text="暂无数据"
+      highlight-current-row
+      element-loading-text="拼命加载中"
     >
-      <el-table-column label="提现编号" prop="withdraw_number" width="100px"/>
-      <el-table-column label="用户昵称" prop="nick_name" />
-      <el-table-column label="用户ID" prop="exhibit_id" />
-      <el-table-column label="提现金额" prop="amount" />
-      <el-table-column label="手续费" prop="fee_amount" />
-      <el-table-column label="到账金额" prop="actual_amount" />
-      <el-table-column label="提现类型" prop="nick_name">
+      <el-table-column label="会员信息" prop="nick_name">
         <template slot-scope="scope">
-          <p>提现类型：余额</p>
+          <div>
+            <img :src="scope.row.headimgurl" alt="" style="width:80px">
+            <p>{{ scope.row.nick_name }}/{{ scope.row.exhibit_id }}</p>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="审核时间" prop="nick_name">
+      <el-table-column label="用户ID" prop="exhibit_id"/>
+      <el-table-column label="关联单号" prop="ref_number"/>
+      <el-table-column label="佣金" prop="amount" />
+      <el-table-column label="订单信息" prop="nick_name">
         <template slot-scope="scope">
-          <p v-if="scope.row.approve_status!='0'">{{$formatDate(scope.row.approve_time)}}</p>
+          <p>商品名称：{{ scope.row.product_name }}</p>
+          <p>订单总价：{{ scope.row.total_price }}</p>
         </template>
       </el-table-column>
-      <el-table-column label="审核人员" prop="approve_user_name" />
-      <el-table-column label="审核状态" prop="nick_name">
-        <template slot-scope="scope">
-          <p>审核状态：
-            <el-tag v-if="scope.row.approve_status=='0'" type="info">未处理</el-tag>
-            <el-tag v-else-if="scope.row.approve_status=='1'" type="success">审核通过</el-tag>
-            <el-tag v-else-if="scope.row.approve_status=='2'" type="warning">审核拒绝</el-tag>
-            <el-tag v-else-if="scope.row.approve_status=='3'">已转账</el-tag>
-          </p>
-        </template>
-      </el-table-column>
-      <el-table-column label="用户联系方式" prop="phone" />
+      <el-table-column label="描述信息" prop="description" />
+      <el-table-column label="变动前金额" prop="prev_amount" />
+      <el-table-column label="变动后金额" prop="post_amount" />
       <el-table-column label="申请发起时间" prop="create_date">
         <template slot-scope="scope">
           <span>{{ $formatDate(scope.row.create_date) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" prop="approve_msg" />
     </el-table>
+    <div class="block" align="center" style="margin-top:20px;padding-bottom:40px;">
+      <el-pagination
+        :current-page="pagination.currentPage"
+        :page-size="pagination.pageSize"
+        :total="pagination.tatal"
+        layout="total, prev, pager, next"
+        @current-change="handleCurrentChange"/>
+    </div>
+    <el-table
+      id="out-table"
+      :data="tableDataExcel"
+      style="display:none"
+      empty-text="暂无数据"
+      highlight-current-row
+    >
+      <el-table-column label="用户昵称" prop="nick_name" />>
+      <el-table-column label="用户ID" prop="exhibit_id"/>
+      <el-table-column label="关联单号" prop="ref_number"/>
+      <el-table-column label="佣金" prop="amount" />
+      <el-table-column label="商品名称" prop="product_name" />
+      <el-table-column label="商品总价" prop="total_price" />>
+      <el-table-column label="描述信息" prop="description" />
+      <el-table-column label="变动前金额" prop="prev_amount" />
+      <el-table-column label="变动后金额" prop="post_amount" />
+      <el-table-column label="申请发起时间" prop="create_date">
+        <template slot-scope="scope">
+          <span>{{ $formatDate(scope.row.create_date) }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
+
     <!-- 添加修改弹窗 -->
     <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title">
-      <el-form ref="addForm" :model="addForm" label-width="100px">
-        <el-form-item :rules="[{ required: true, message: '请选择处理结果', trigger: 'change' }]" label="处理结果:" prop="approve_status">
+      <el-form ref="addForm" :model="addForm" label-width="80px">
+        <el-form-item label="处理结果:">
           <el-select v-model="addForm.approve_status" width="100%" placeholder="请选择">
             <el-option label="通过" value="1"/>
             <el-option label="拒绝" value="2"/>
           </el-select>
         </el-form-item>
-        <el-form-item :rules="[{ required: true, message: '请选择处理结果', trigger: 'change' }]" label="备注:" prop="approve_msg">
+        <el-form-item label="备注:">
           <el-input v-model="addForm.approve_msg" auto-complete="off" />
         </el-form-item>
         <el-form-item>
@@ -178,7 +139,6 @@ export default {
         {"label":"已通过", name:"01"},
         {"label":"已拒绝", name:"02"}
       ],
-      
       query: {
         exhibit_id: "",
         keyword:"",
@@ -220,13 +180,13 @@ export default {
       let begin_date = this.yymmddFormat(this.query.time[0])
       let end_date = this.yymmddFormat(this.query.time[1])
       request({
-        url: "/admin/finance/getWithdrawList?currPage="+this.pagination.currentPage+"&pageSize="+this.pagination.pageSize+"&exhibit_id="+this.query.exhibit_id+"&approve_status="+this.query.approve_status+"&keyword="+this.query.keyword+"&begin_date="+begin_date+"&end_date="+end_date,
+        url: "/admin/finance/listUserAccountLog?currPage="+this.pagination.currentPage+"&pageSize="+this.pagination.pageSize+"&exhibit_id="+this.query.exhibit_id+"&keyword="+this.query.keyword+"&begin_date="+begin_date+"&end_date="+end_date,
         method: "get"
       }).then(response => {
         if (response.code === 200) {
           const result = response.data;
           that.listLoading = false;
-          that.tableData = result.wthdrawList
+          that.tableData = result.accountLogList
           that.pagination.tatal = result.totalNum
           this.getTableDatasExcal()
         } else {
@@ -238,15 +198,18 @@ export default {
     },
     getTableDatasExcal() {
       const that = this;
+      that.classTop = [];
       let begin_date = this.yymmddFormat(this.query.time[0])
       let end_date = this.yymmddFormat(this.query.time[1])
+      console.log(this.pagination.tatal)
       request({
-        url: "/admin/finance/getWithdrawList?currPage=1"+"&pageSize="+this.pagination.tatal+"&exhibit_id="+this.query.exhibit_id+"&approve_status="+this.query.approve_status+"&keyword="+this.query.keyword+"&begin_date="+begin_date+"&end_date="+end_date,
+        url: "/admin/finance/listUserAccountLog?currPage=1"+"&pageSize="+this.pagination.tatal+"&exhibit_id="+this.query.exhibit_id+"&keyword="+this.query.keyword+"&begin_date="+begin_date+"&end_date="+end_date,
         method: "get"
       }).then(response => {
         if (response.code === 200) {
           const result = response.data;
-          that.tableDataExcel = result.wthdrawList
+          let data = response.data;
+          that.tableDataExcel = data.accountLogList
         }
       });
     },
@@ -286,7 +249,10 @@ export default {
             }
       });
         }).catch(() => {
-                   
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
         });
       }
       // this.$router.push({
@@ -390,7 +356,7 @@ export default {
           //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
           new Blob([wbout], { type: "application/octet-stream" }),
           //设置导出文件名称
-          "提现列表.xlsx"
+          "佣金明细.xlsx"
           );
       } catch (e) {
           if (typeof console !== "undefined") console.log(e, wbout);

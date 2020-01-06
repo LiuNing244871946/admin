@@ -11,7 +11,7 @@
         <el-input
           v-model="query.exhibit_id"
           type="text"
-          placeholder="用户ID："
+          placeholder="用户ID"
           clearable
           @keyup.enter.native="onSubmit"
         />
@@ -41,6 +41,8 @@
       </el-form-item>
       <el-form-item class="submit">
         <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="success" @click="exportExcel">导出Excel</el-button>
+        
       </el-form-item>
     </el-form>
     <!-- 表格数据 -->
@@ -56,7 +58,14 @@
           element-loading-text="拼命加载中"
         >
           <el-table-column label="订单编号" prop="origin_order_number" />
-          <el-table-column label="用户昵称" prop="nick_name" />
+          <el-table-column label="下单用户" prop="nick_name">
+            <template slot-scope="scope">
+              <div>
+                <img :src="scope.row.headimgurl" alt="" style="width:80px">
+                <p>{{ scope.row.nick_name }}/{{ scope.row.exhibit_id }}</p>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label="用户ID" prop="exhibit_id" />
           <el-table-column label="价格" prop="total_price" />
           <el-table-column label="收货地址" prop="province_name">
@@ -84,7 +93,27 @@
         </div>
       </el-tab-pane>
     </el-tabs>
-
+    <el-table
+      style="display:none"
+      :data="tableDataExcel"
+      id="out-table"
+      show-header
+      empty-text="暂无数据"
+      highlight-current-row
+    >
+      <el-table-column label="订单编号" prop="origin_order_number" />
+      <el-table-column label="订单编号" prop="origin_order_number" />
+      <el-table-column label="用户昵称" prop="nick_name" />
+      <el-table-column label="用户ID" prop="exhibit_id" />
+      <el-table-column label="价格" prop="total_price" />
+      <el-table-column label="收货地址" prop="province_name">
+        <template slot-scope="scope">
+          <span>{{ scope.row.province_name }}{{ scope.row.city_name }}{{ scope.row.district_name }}{{ scope.row.detail_address }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="联系人电话" prop="contact_number" />
+      <el-table-column label="联系人姓名" prop="contact_name" />
+    </el-table>
     <!-- 添加修改弹窗 -->
     <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title">
       <el-form ref="addForm" :model="addForm" status-icon label-width="100px">
@@ -117,7 +146,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-button>取消</el-button>
+          <el-button @click="iv_dialog.show = false">取消</el-button>
           <el-button type="primary" @click="submitForm('addForm')">添加</el-button>
         </el-form-item>
       </el-form>
@@ -127,6 +156,8 @@
 <script>
 /* eslint-disable */
 import request from "@/utils/request";
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 export default {
   data() {
     return {
@@ -147,6 +178,7 @@ export default {
         time:["",""]
       },
       tableData: [],
+      tableDataExcel:[],
       listLoading: true,
       pagination: {
         currentPage: 1,
@@ -188,7 +220,8 @@ export default {
           that.listLoading = false;
           let data = response.data;
           that.tableData = data.orderList
-          that.pagination.tatal = data.totalNum;
+          that.pagination.tatal = data.totalNum
+          this.getTableDatasExcal()
         } else {
           that.pagination.pageSize = 0;
           that.pagination.tatal = 0;
@@ -196,10 +229,26 @@ export default {
         }
       });
     },
+    getTableDatasExcal() {
+      const that = this;
+      that.classTop = [];
+      let begin_date = this.yymmddFormat(this.query.time[0])
+      let end_date = this.yymmddFormat(this.query.time[1])
+      request({
+        url: "/admin/finance/getAllOriginalOrderList?currPage=1"+"&pageSize="+this.pagination.tatal+ "&payment_status="+ this.query.payment_status +"&exhibit_id="+this.query.exhibit_id+"&keyword="+this.query.keyword+"&begin_date="+begin_date+"&end_date="+end_date+"&order_type="+this.query.order_type,
+        method: "get"
+      }).then(response => {
+        if (response.code === 200) {
+          const result = response.data;
+          let data = response.data;
+          that.tableDataExcel = data.orderList
+        }
+      });
+    },
     // 打开修改弹窗
     handleRow(row) {
       this.$router.push({
-        path: "/admin/order/orderDetail",
+        path: '/admin/order/originalOrderDetail',
         query: { orderId: row.id }
       });
     },
@@ -294,6 +343,30 @@ export default {
         return ""
       }
     },
+    exportExcel() {
+    /* 从表生成工作簿对象 */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      /* 获取二进制字符串作为输出 */
+      var wbout = XLSX.write(wb, {
+          bookType: "xlsx",
+          bookSST: true,
+          type: "array"
+      });
+      try {
+          FileSaver.saveAs(
+          //Blob 对象表示一个不可变、原始数据的类文件对象。
+          //Blob 表示的不一定是JavaScript原生格式的数据。
+          //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+          //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+          new Blob([wbout], { type: "application/octet-stream" }),
+          //设置导出文件名称
+          "原始订单列表.xlsx"
+          );
+      } catch (e) {
+          if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    }
   }
 };
 </script>

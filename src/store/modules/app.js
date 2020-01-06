@@ -30,6 +30,7 @@ const app = {
     setUserInfo: (state, userName) => {
       state.userName = userName
       window.sessionStorage.setItem('userName', userName)
+      window.localStorage.setItem('userName', userName)
     }
   },
   actions: {

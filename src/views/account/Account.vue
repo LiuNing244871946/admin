@@ -3,30 +3,12 @@
     <el-form
       ref="formInline"
       :model="formInline"
-      :rules="formInline"
       :inline="true"
       class="merchantSubAcount"
     >
-      <el-form-item prop="stockCode">
-        <el-input
-          v-model="formInline.product_name"
-          type="text"
-          placeholder="商品名称"
-          clearable
-          @keyup.enter.native="onSubmit"
-        />
-      </el-form-item>
-      <el-form-item prop="stockName">
-        <el-input
-          v-model="formInline.product_title"
-          type="text"
-          placeholder="商品标题"
-          clearable
-          @keyup.enter.native="onSubmit"
-        />
-      </el-form-item>
+
       <el-form-item class="submit">
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <!-- <el-button type="primary" @click="onSubmit">查询</el-button> -->
         <el-button type="success" @click="addAdmin">
           <i class="el-icon-plus" />添加管理员
         </el-button>
@@ -50,37 +32,36 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" style="color: #478FCA" @click="handleRow(scope.row)">修改</el-button>
+          <el-button type="text" style="color: #478FCA" @click="del(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <div class="block" align="center" style="margin-top:20px;padding-bottom:40px;">
       <el-pagination
-        :current-page="pagination.currentPage"
-        :page-sizes="pagination.pageSizes"
+        :current-page="pagination.currPage"
         :page-size="pagination.pageSize"
         :total="pagination.tatal"
-        layout="total, sizes, prev, pager, next, jumper"
+        layout="total, prev, pager, next, jumper"
         small
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
     </div>
     <!-- 添加管理员 -->
-    <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title">
-      <el-form ref="addForm" :model="addForm" label-width="90px">
-        <el-form-item label="用户名：">
+    <el-dialog v-if="iv_dialog.show" :visible.sync="iv_dialog.show" :title="iv_dialog.title">
+      <el-form ref="addForm" :model="addForm" :rules="rules" label-width="100px">
+        <el-form-item label="用户名：" prop="username">
           <el-input v-model="addForm.username" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="密码：">
-          <el-input v-model="addForm.password" auto-complete="off" />
-        </el-form-item>
-        <el-form-item label="电话：">
-          <el-input v-model="addForm.phone" auto-complete="off" />
-        </el-form-item>
-        <el-form-item label="选择分组：">
+        <el-form-item label="选择分组：" prop="group_id">
           <el-select v-model="addForm.group_id" placeholder>
             <el-option v-for="i in groupData" :key="i.id" :label="i.group_name" :value="i.id" />
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="!iv_dialog.isEdit" label="密码：" prop="password">
+          <el-input v-model="addForm.password" :disabled="disabled" show-password auto-complete="off" />
+        </el-form-item>
+        <el-form-item label="电话：">
+          <el-input v-model="addForm.phone" auto-complete="off" />
         </el-form-item>
         <el-form-item style="display:block;text-align:center;" label-width="0px">
           <el-button @click="iv_dialog.show = false">取消</el-button>
@@ -102,18 +83,29 @@ export default {
         currPage: 1,
         pageSize: 10
       },
+      disabled:false,
       addForm: {
         username: "",
         phone: "",
         group_id: "",
         password: ""
       },
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        group_id: [
+          { required: true, message: '请选择用户分组', trigger: 'change' }
+        ],
+        password: [
+          { required: true, message: '设置登陆密码', trigger: 'blur' }
+        ],
+      },
       tableData: [],
       listLoading: true,
       pagination: {
-        currentPage: 1,
-        pageSizes: [10],
-        pageSize: 0,
+        currPage: 1,
+        pageSize: 10,
         tatal: 0
       },
       groupData: null,
@@ -137,9 +129,8 @@ export default {
       that.listLoading = true;
       const formInline = that.formInline;
       request({
-        url: "/admin/index/getSysUserList",
+        url: "/admin/index/getSysUserList?pageSize="+this.pagination.pageSize+"&currPage="+this.pagination.currPage,
         method: "get",
-        data: formInline
       }).then(response => {
         if (response.code === 200) {
           const result = response.data.sysUserList;
@@ -173,31 +164,36 @@ export default {
       that.formInline.page = 1;
       that.getTableDatas();
     },
-    handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`)
-    },
+    
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`)
       const that = this;
-      that.formInline.page = val;
+      that.pagination.currPage = val;
       that.getTableDatas();
     },
     // 添加管理员
     addAdmin() {
       const that = this;
       that.iv_dialog.isEdit = false;
-      that.iv_dialog.isEdit = "添加管理员";
+      that.iv_dialog.title = "添加管理员";
       that.iv_dialog.show = true;
+      this.resetForm()
       that.addForm = Object.assign({}, this.addFormTmp)
     },
     submitForm(formName) {
       let that = this;
       if (that.iv_dialog.isEdit) {
+        this.disabled = true
         this.postForm({ ...that.addForm, ...{ id: this.userId } }, formName);
       } else {
         this.postForm(this.addForm, formName);
       }
-      this.iv_dialog.isEdit = false;
+      
+    },
+    resetForm() {
+      this.$nextTick(()=>{
+        this.$refs['addForm'].resetFields();
+      })                
     },
     //表单提交
     postForm(formData, formName) {
@@ -224,26 +220,49 @@ export default {
                 type: "warning"
               });
             }
+            that.iv_dialog.isEdit = false;
           });
         } else {
-          this.$message.error(response.msg);
           return false;
         }
       });
     },
-    //重置表单
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    del(row) {
+      this.$confirm('此操作将删除该管理员, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.delPost(row)
+      }).catch(() => {
+
+      })
+    },
+    delPost(row) {
+      request({
+        url: '/admin/index/delSysUser/' + row.id,
+        method: 'post'
+      }).then(response => {
+        if (response.code === 200) {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          this.getTableDatas()
+        } else {
+          this.$message.error(response.msg)
+        }
+      })
     },
     handleRow(row) {
-      console.log(row);
       let that = this;
+      that.iv_dialog.isEdit = true;
+      that.iv_dialog.show = true;
+      this.resetForm()
       that.addForm.group_id = row.group_id;
       that.addForm.phone = row.phone;
       that.addForm.username = row.username;
       that.userId = row.id;
-      that.iv_dialog.isEdit = true;
-      that.iv_dialog.show = true;
       that.iv_dialog.title = "修改管理员";
     }
   }
@@ -251,4 +270,7 @@ export default {
 </script>
 
 <style lang="scss">
+.el-select {
+  width: 100%;
+}
 </style>

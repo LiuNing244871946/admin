@@ -1,63 +1,47 @@
 <template>
   <div class="box">
     <el-form ref="formInline" :model="formInline" :rules="formInline" :inline="true" class="merchantSubAcount">
-      <el-form-item prop="stockCode">
-        <el-input v-model="formInline.agent_name" type="text" placeholder="代理商名称" clearable @keyup.enter.native="onSubmit"/>
-      </el-form-item>
-      <el-form-item prop="stockName">
-        <el-input v-model="formInline.contact_number" type="text" placeholder="联系方式" clearable @keyup.enter.native="onSubmit"/>
-      </el-form-item>
+
       <el-form-item class="submit">
-        <el-button type="primary" @click="onSubmit">查询</el-button>
         <el-button type="primary" @click="addEnt('add')">添加代理商</el-button>
       </el-form-item>
     </el-form>
     <!-- 表格数据 -->
-    <el-table v-loading="listLoading" :data="tableData" fit show-header empty-text="暂无数据" highlight-current-row element-loading-text="拼命加载中">
+    <el-table v-loading="listLoading" :data="tableData" border fit show-header empty-text="暂无数据" highlight-current-row element-loading-text="拼命加载中">
       <el-table-column label="代理商名称" prop="agent_name"/>
       <el-table-column label="联系方式" prop="contact_number"/>
       <el-table-column label="用户名" prop="username"/>
       <el-table-column label="创建时间" prop="create_date">
         <template slot-scope="scope">
-          <span>{{$formatDate(scope.row.create_date)}}</span>
+          <span>{{ $formatDate(scope.row.create_date) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" prop="modify_date">
         <template slot-scope="scope">
-          <span>{{$formatDate(scope.row.modify_date)}}</span>
+          <span>{{ $formatDate(scope.row.modify_date) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" style="color: #478FCA" @click="addEnt('edit',scope.row)">编辑</el-button>
+          <el-button type="text" style="color: #478FCA" @click="del(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div class="block" align="center" style="margin-top:20px;padding-bottom:40px;">
-      <el-pagination
-        :current-page="pagination.currentPage"
-        :page-sizes="pagination.pageSizes"
-        :page-size="pagination.pageSize"
-        :total="pagination.tatal"
-        layout="total, sizes, prev, pager, next, jumper"
-        small
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
-    </div>
     <!-- 代理商 -->
-    <el-dialog :visible.sync="db_dialog.show" :title="db_dialog.title">
-      <el-form ref="entForm" :model="entForm" label-width="120px">
-        <el-form-item label="代理商名称：">
-          <el-input v-model="entForm.agent_name" />
+    <el-dialog v-if="db_dialog.show" :visible.sync="db_dialog.show" :title="db_dialog.title">
+      <el-form ref="entForm" :rules="rules" :model="entForm" label-width="120px">
+        <el-form-item label="代理商名称：" prop="agent_name">
+          <el-input v-model="entForm.agent_name"/>
         </el-form-item>
-       <el-form-item label="联系人：">
+        <el-form-item label="用户名：" prop="username">
+          <el-input v-model="entForm.username"/>
+        </el-form-item>
+        <el-form-item label="联系人：">
           <el-input v-model="entForm.contact" />
         </el-form-item>
         <el-form-item label="联系电话：">
           <el-input v-model="entForm.contact_number" />
-        </el-form-item>
-        <el-form-item label="用户名：">
-          <el-input v-model="entForm.username" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -72,6 +56,14 @@ import request from '@/utils/request'
 export default {
   data() {
     return {
+      rules: {
+        agent_name: [
+          { required: true, message: '请输入代理商名称', trigger: 'blur' }
+        ],
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ]
+      },
       dialogVisible: false,
       formInline: {
         currPage: 1,
@@ -82,22 +74,21 @@ export default {
       tableData: [],
       listLoading: true,
       pagination: {
-        currentPage: 1,
-        pageSizes: [10],
-        pageSize: 0,
+        currPage: 1,
+        pageSize: 10,
         tatal: 0
       },
-      db_dialog:{
-        title:"添加代理商",
+      db_dialog: {
+        title: '添加代理商',
         show: false,
-        isEdit:false,
-        entId:''
+        isEdit: false,
+        entId: ''
       },
-      entForm:{
-        agent_name:"",
-        contact:"",
-        contact_number:"",
-        username:""
+      entForm: {
+        agent_name: '',
+        contact: '',
+        contact_number: '',
+        username: ''
       }
     }
   },
@@ -109,15 +100,12 @@ export default {
     getTableDatas() {
       const that = this
       that.listLoading = true
-      const formInline = that.formInline
       request({
-        url: '/admin/index/getAgentList',
-        method: 'get',
-        data: formInline
+        url: '/admin/index/getAgentList?pageSize=' + this.pagination.pageSize + '&currPage=' + this.pagination.currPage,
+        method: 'get'
       }).then(response => {
         if (response.code === 200) {
           const result = response.data.sysUserList
-          // that.pagination.pageSize = response.data.pageSize
           that.pagination.tatal = response.data.totalNum
           that.tableData = result
           that.listLoading = false
@@ -131,70 +119,98 @@ export default {
     // 查询
     onSubmit() {
       const that = this
-      that.formInline.page = 1
       that.getTableDatas()
-    },
-    handleSizeChange(val) {
-    // console.log(`每页 ${val} 条`)
     },
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`)
       const that = this
-      that.formInline.page = val
+      that.pagination.currPage = val
       that.getTableDatas()
     },
-    handleClick1() {
-
-    },
-    addEnt(act,row){
+    addEnt(act, row) {
       this.db_dialog.show = true
+      this.resetForm()
       this.db_dialog.entId = ''
-      
-      switch(act) {
+      switch (act) {
         case 'add':
-          this.db_dialog.title = "添加代理商"
+          this.db_dialog.title = '添加代理商'
           this.db_dialog.isEdit = false
-          this.entForm={
-            agent_name:"",
-            contact:"",
-            contact_number:"",
-            username:""
+          this.entForm = {
+            agent_name: '',
+            contact: '',
+            contact_number: '',
+            username: ''
           }
           break
         case 'edit':
           this.db_dialog.entId = row.id
-          this.db_dialog.title = "修改代理商信息"
+          this.db_dialog.title = '修改代理商信息'
           this.db_dialog.isEdit = true
-          this.entForm={
-            agent_name:row.agent_name,
-            contact:row.contact,
-            contact_number:row.contact_number,
-            username:row.username
+          this.entForm = {
+            agent_name: row.agent_name,
+            contact: row.contact,
+            contact_number: row.contact_number,
+            username: row.username
           }
           break
       }
     },
-    addEntPost(){
+    addEntPost() {
       let postData = this.entForm
-      console.log(this.db_dialog.entId)
-      if(this.db_dialog.isEdit){
-        postData = {...postData,...{id : this.db_dialog.entId}}
+      if (this.db_dialog.isEdit) {
+        postData = { ...postData, ...{ id: this.db_dialog.entId }}
       }
+      this.$refs['entForm'].validate(valid => {
+        if (valid) {
+          request({
+            url: '/admin/index/putAgent',
+            method: 'post',
+            data: postData
+          }).then(response => {
+            if (response.code === 200) {
+              this.$message({
+                message: '提交成功',
+                type: 'success'
+              })
+              this.db_dialog.show = false
+              this.getTableDatas()
+            } else {
+              this.$message.error(response.msg)
+            }
+          })
+        }
+      })
+    },
+    del(row) {
+      this.$confirm('此操作将删除该代理商, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.delPost(row)
+      }).catch(() => {
+
+      })
+    },
+    delPost(row) {
+      console.log(row)
       request({
-        url: '/admin/index/putAgent',
-        method: 'post',
-        data: postData
+        url: '/admin/index/delAgent/' + row.id,
+        method: 'post'
       }).then(response => {
         if (response.code === 200) {
           this.$message({
-            message: "提交成功",
-            type: "success"
-          });
-          this.db_dialog.show = false
+            message: '删除成功',
+            type: 'success'
+          })
           this.getTableDatas()
         } else {
-          this.$message.error(response.msg);
+          this.$message.error(response.msg)
         }
+      })
+    },
+    resetForm() {
+      this.$nextTick(() => {
+        this.$refs['entForm'].resetFields()
       })
     }
   }

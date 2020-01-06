@@ -1,18 +1,18 @@
 <template>
   <div class="box">
-    
+
     <!-- 表格数据 -->
-    <el-table v-loading="listLoading" :data="tableData" fit show-header empty-text="暂无数据" highlight-current-row element-loading-text="拼命加载中">
+    <el-table v-loading="listLoading" :data="tableData" border fit show-header empty-text="暂无数据" highlight-current-row element-loading-text="拼命加载中">
       <el-table-column label="名称" prop="setting_desc"/>
       <el-table-column label="佣金比例" prop="setting_value"/>
       <el-table-column label="首次添加时间" prop="create_date">
         <template slot-scope="scope">
-          <span>{{$formatDate(scope.row.create_date)}}</span>
+          <span>{{ $formatDate(scope.row.create_date) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="最后修改日期" prop="modify_date">
         <template slot-scope="scope">
-          <span>{{$formatDate(scope.row.modify_date)}}</span>
+          <span>{{ $formatDate(scope.row.modify_date) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -21,11 +21,10 @@
         </template>
       </el-table-column>
     </el-table>
-    
     <!-- 添加分组弹窗 -->
-    <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title" >
+    <el-dialog v-if="iv_dialog.show" :visible.sync="iv_dialog.show" :title="iv_dialog.title" >
       <el-form ref="addForm" :model="addForm" label-width="110px">
-        <el-form-item label="参数值">
+        <el-form-item :rules="[{ required: true, message: '请输入参数值', trigger: 'blur' }]" label="参数值：" prop="setting_value">
           <el-input v-model="addForm.setting_value" auto-complete="off" />
         </el-form-item>
         <el-form-item style="display:block;text-align:center;" label-width="0px">

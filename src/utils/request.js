@@ -28,7 +28,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response => {
     const res = response.data
-    if (res.code === 100000) {
+    if (res.code === 101) {
       // MessageBox.confirm('你还未登录，可以取消后继续留在该页面，或者重新登录', '提示', {
       //   confirmButtonText: '登录',
       //   cancelButtonText: '取消',

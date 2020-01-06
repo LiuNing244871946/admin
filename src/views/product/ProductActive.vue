@@ -7,26 +7,7 @@
       :inline="true"
       class="merchantSubAcount"
     >
-      <el-form-item prop="stockCode">
-        <el-input
-          v-model="formInline.product_name"
-          type="text"
-          placeholder="商品名称"
-          clearable
-          @keyup.enter.native="onSubmit"
-        />
-      </el-form-item>
-      <el-form-item prop="stockName">
-        <el-input
-          v-model="formInline.product_title"
-          type="text"
-          placeholder="商品标题"
-          clearable
-          @keyup.enter.native="onSubmit"
-        />
-      </el-form-item>
       <el-form-item class="submit">
-        <el-button type="primary" @click="onSubmit">查询</el-button>
         <el-button type="success" @click="addClass">
           <i class="el-icon-plus" />商品活动
         </el-button>
@@ -37,6 +18,7 @@
       v-loading="listLoading"
       :data="tableData"
       fit
+      border
       show-header
       empty-text="暂无数据"
       highlight-current-row
@@ -46,7 +28,7 @@
       <el-table-column label="活动名称" prop="activity_name" />
       <el-table-column prop="image_url" label="活动主图">
         <template slot-scope="scope">
-          <img :src="scope.row.image_url" @click="showImg(scope.row.image_url)" width="80" >
+          <img :src="scope.row.image_url" width="80" @click="showImg(scope.row.image_url)" >
         </template>
       </el-table-column>
       <el-table-column label="商品类型" prop="regDate" />
@@ -60,15 +42,15 @@
     </el-table>
 
     <!-- 添加修改弹窗 -->
-    <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title">
-      <el-form ref="addForm" :model="addForm" status-icon label-width="100px">
-        <el-form-item label="活动名称:">
+    <el-dialog v-if="iv_dialog.show" :visible.sync="iv_dialog.show" :title="iv_dialog.title">
+      <el-form ref="addForm" :model="addForm" :rules="rules" status-icon label-width="110px">
+        <el-form-item label="活动名称:" prop="activity_name">
           <el-input v-model="addForm.activity_name" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="排序:">
+        <el-form-item label="排序:" prop="sort">
           <el-input v-model="addForm.sort" type="number" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="上传活动头图:">
+        <el-form-item label="上传活动头图:" prop="image_url">
           <el-upload
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
@@ -81,15 +63,15 @@
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-button>取消</el-button>
+          <el-button @click="iv_dialog.show=false">取消</el-button>
           <el-button type="primary" @click="submitForm('addForm')">添加</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
-    
-  <!-- 图片查看器 -->
+
+    <!-- 图片查看器 -->
     <el-dialog :visible.sync="im_dialog.show" title="查看图片">
-      <img width="100%" :src="im_dialog.src" alt="">
+      <img :src="im_dialog.src" width="100%" alt="">
     </el-dialog>
   </div>
 </template>
@@ -100,6 +82,17 @@ export default {
   data() {
     return {
       id: "",
+      rules: {
+        activity_name: [
+          { required: true, message: '请编辑活动名称', trigger: 'blur' }
+        ],
+        image_url: [
+          { required: true, message: '请上传活动图片', trigger: 'change' }
+        ],
+        sort: [
+          { required: true, message: '请编辑排序', trigger: 'blur' }
+        ],
+      },
       formInline: {
         currPage: 1,
         pageSize: 10
@@ -202,7 +195,6 @@ export default {
     submitForm(formName) {
       let that = this;
       if (that.iv_dialog.isEdit) {
-        console.log(this.id);
         this.postForm({ ...that.addForm, ...{ id: this.id } }, formName);
       } else {
         this.postForm(this.addForm, formName);
@@ -212,8 +204,14 @@ export default {
     //添加商品分类
     addClass() {
       this.iv_dialog.show = true;
+      this.resetForm()
       this.iv_dialog.title = "添加管理员分组";
       this.iv_dialog.isEdit = false;
+      this.addForm= {
+        sort: "",
+        image_url: "",
+        activity_name: ""
+      }
     },
     postForm(form, formName) {
       // return
@@ -271,8 +269,10 @@ export default {
         })
         .catch(_ => {});
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    resetForm() {
+      this.$nextTick(()=>{
+        this.$refs['addForm'].resetFields();
+      })                
     },
     showImg(url){
       this.im_dialog.src = url

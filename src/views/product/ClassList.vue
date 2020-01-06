@@ -7,26 +7,8 @@
       :inline="true"
       class="merchantSubAcount"
     >
-      <el-form-item prop="stockCode">
-        <el-input
-          v-model="formInline.product_name"
-          type="text"
-          placeholder="商品名称"
-          clearable
-          @keyup.enter.native="onSubmit"
-        />
-      </el-form-item>
-      <el-form-item prop="stockName">
-        <el-input
-          v-model="formInline.product_title"
-          type="text"
-          placeholder="商品标题"
-          clearable
-          @keyup.enter.native="onSubmit"
-        />
-      </el-form-item>
+
       <el-form-item class="submit">
-        <el-button type="primary" @click="onSubmit">查询</el-button>
         <el-button type="success" @click="addClass">
           <i class="el-icon-plus" />商品分类
         </el-button>
@@ -37,6 +19,7 @@
       v-loading="listLoading"
       :data="tableData"
       fit
+      border
       show-header
       empty-text="暂无数据"
       highlight-current-row
@@ -53,30 +36,22 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" style="color: #478FCA" @click="handleRow(scope.row)">修改</el-button>
+          <el-button type="text" style="color: #478FCA" @click="del(scope.row)">删除</el-button>
+
         </template>
       </el-table-column>
     </el-table>
 
     <!-- 添加修改弹窗 -->
-    <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title">
-      <el-form ref="addForm" :model="addForm" status-icon label-width="100px">
-        <el-form-item label="商品分类名称:">
+    <el-dialog v-if="iv_dialog.show" :visible.sync="iv_dialog.show" :title="iv_dialog.title">
+      <el-form ref="addForm" :model="addForm" :rules="rules" status-icon label-width="110px">
+        <el-form-item label="商品分类名称:" prop="category_name">
           <el-input v-model="addForm.category_name" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="排序:">
+        <el-form-item label="排序:" prop="sort_order">
           <el-input v-model="addForm.sort_order" type="number" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="父级分类选择:">
-          <el-select
-            v-if="classTop && classTop.length>0"
-            v-model="addForm.parent_cat_id"
-            placeholder="选择父级分类"
-          >
-            <el-option label="不选择" value />
-            <el-option v-for="i in classTop" :key="i.id" :label="i.category_name" :value="i.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="上传分类图片:">
+        <el-form-item label="上传分类图片:" prop="category_img">
           <el-upload
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
@@ -103,6 +78,17 @@ export default {
   data() {
     return {
       id: "",
+      rules: {
+        category_name: [
+          { required: true, message: '请编辑分类名称', trigger: 'blur' }
+        ],
+        category_img: [
+          { required: true, message: '请上传分类图片', trigger: 'change' }
+        ],
+        sort_order: [
+          { required: true, message: '请编辑排序', trigger: 'blur' }
+        ],
+      },
       formInline: {
         currPage: 1,
         pageSize: 10
@@ -117,7 +103,6 @@ export default {
       },
       addForm: {
         sort_order: null,
-        parent_cat_id: "",
         category_img: "",
         category_name: ""
       },
@@ -171,11 +156,11 @@ export default {
     // 打开修改弹窗
     handleRow(row) {
       this.iv_dialog.show = true;
+      this.resetForm()
       this.iv_dialog.title = "修改管理员分组";
       this.iv_dialog.isEdit = true;
       this.id = row.id;
       this.addForm.category_name = row.category_name;
-      this.addForm.parent_cat_id = row.parent_cat_id;
       this.addForm.category_img = row.category_img;
       this.addForm.sort_order = row.sort_order;
     },
@@ -213,7 +198,6 @@ export default {
     submitForm(formName) {
       let that = this;
       if (that.iv_dialog.isEdit) {
-        console.log(this.id);
         this.postForm({ ...that.addForm, ...{ id: this.id } }, formName);
       } else {
         this.postForm(this.addForm, formName);
@@ -225,11 +209,17 @@ export default {
       this.iv_dialog.show = true;
       this.iv_dialog.title = "添加管理员分组";
       this.iv_dialog.isEdit = false;
+      this.resetForm()
+      this.addForm= {
+        sort_order: null,
+        category_img: "",
+        category_name: ""
+      }
     },
     postForm(form, formName) {
       // return
       let that = this;
-      this.$refs[formName].validate(valid => {
+      this.$refs['addForm'].validate(valid => {
         if (valid) {
           request({
             url: "/admin/product/putCategory",
@@ -243,7 +233,6 @@ export default {
               });
               that.iv_dialog.show = false;
               this.getTableDatas();
-              that.resetForm(formName);
             } else {
               this.$message.error(response.msg);
             }
@@ -251,9 +240,38 @@ export default {
         }
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    }
+    del(row){
+      this.$confirm('此操作将删除该分类, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.delPost(row)
+        }).catch(() => {
+             
+        });
+    },
+    delPost(row){
+      request({
+        url: "/admin/product/delCategory/"+row.id,
+        method: "post",
+      }).then(response => {
+        if (response.code === 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+          this.getTableDatas();
+        } else {
+          this.$message.error(response.msg);
+        }
+      });
+    },
+    resetForm() {
+      this.$nextTick(()=>{
+        this.$refs['addForm'].resetFields();
+      })                
+    },
   }
 };
 </script>

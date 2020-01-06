@@ -22,7 +22,15 @@ export const API = {
   // 获取菜单列表
   Menu: (TokenAdmin) => {
     return request({
-      url: 'admin/index/listmenu',
+      url: '/admin/index/listmenu',
+      method: 'get',
+      data: { TokenAdmin }
+    })
+  },
+  // 获取权限菜单列表
+  MenuAuth: (TokenAdmin) => {
+    return request({
+      url: '/admin/index/listAuthMenu',
       method: 'get',
       data: { TokenAdmin }
     })

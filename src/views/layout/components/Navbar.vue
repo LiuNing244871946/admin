@@ -4,7 +4,7 @@
     <breadcrumb />
     <div class="avatar-container" trigger="click">
       <div class="navbarRight">
-        <span>当前用户：{{ userName }}</span>
+        <span>当前用户：{{ userNames }}</span>
         <span style="cursor:pointer" @click="modifyPwd">
           <i class="el-icon-setting" />修改密码
         </span>
@@ -58,6 +58,7 @@ export default {
     }
     return {
       dialogPasswordVisible: false,
+      userNames: '',
       formPwd: {
         oldPwd: '',
         password: '',
@@ -80,6 +81,7 @@ export default {
     ])
   },
   mounted() {
+    this.userNames = localStorage.getItem('userName')
   },
   methods: {
     // 面包屑点击事件
@@ -89,6 +91,7 @@ export default {
     // 退出的功能
     logout() {
       removeToken()
+      sessionStorage.clear()
       this.$router.push('/login')
     },
     // 修改密码

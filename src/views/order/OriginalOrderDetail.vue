@@ -43,7 +43,6 @@
         <el-card class="box-card">
           <div slot="header" class="clearfix" >
             <span>发货状态</span>
-            <el-button v-if="orderInfo.order_status==0" style="float: right; padding: 3px 0" type="text" @click="deliverOrder" >点击发货</el-button>
           </div>
           <div>
             <p v-if="orderInfo.order_status==0">未发货</p>
@@ -60,17 +59,7 @@
     <el-dialog :visible.sync="iv_dialog.show" :title="iv_dialog.title" >
       <el-form ref="addForm" :model="addForm" label-width="110px">
         <el-form-item label="物流公司">
-          <!-- <el-input v-model="addForm.logistics_company" auto-complete="off" /> -->
-          <el-select v-model="addForm.logistics_company" filterable placeholder="请选择" style="width:100%">
-            <el-option label="请选择" value=""/>
-            <el-option label="中通快递" value="中通快递"/>
-            <el-option label="圆通快递" value="圆通快递"/>
-            <el-option label="申通快递" value="申通快递"/>
-            <el-option label="韵达快递" value="韵达快递"/>
-            <el-option label="顺丰速运" value="顺丰速运"/>
-            <el-option label="天天快递" value="天天快递"/>
-            <el-option label="邮政速递" value="邮政速递"/>
-          </el-select>
+          <el-input v-model="addForm.logistics_company" auto-complete="off" />
         </el-form-item>
         <el-form-item label="物流单号">
           <el-input v-model="addForm.logistics_number" auto-complete="off" />
